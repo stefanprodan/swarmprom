@@ -1,9 +1,9 @@
 #!/bin/sh -e
 
-cat /etc/prometheus/weave-cortext.yml | \
-    sed "s@#password: <token>#@password: '$WEAVE_TOKEN'@g" > /tmp/weave-cortext.yml
+cat /etc/prometheus/weave-cortex.yml | \
+    sed "s@#password: <token>#@password: '$WEAVE_TOKEN'@g" > /tmp/weave-cortex.yml
 
-mv /tmp/weave-cortext.yml /etc/prometheus/weave-cortext.yml
+mv /tmp/weave-cortex.yml /etc/prometheus/weave-cortex.yml
 
 set -- /bin/prometheus "$@"
 
