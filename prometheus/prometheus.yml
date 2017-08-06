@@ -2,10 +2,6 @@ global:
   scrape_interval:     15s
   evaluation_interval: 15s
 
-  labels:
-    cluster: swarm
-    replica: "1"
-
   external_labels:
     monitor: 'promswarm'
 
