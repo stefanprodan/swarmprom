@@ -1,0 +1,64 @@
+version: "3"
+
+networks:
+  netmon:
+
+services:
+  dockerd-exporter:
+    image: stefanprodan/dockerd-exporter
+    networks:
+      - netmon
+    deploy:
+      mode: global
+
+  cadvisor:
+    image: google/cadvisor
+    networks:
+      - netmon
+    command: -logtostderr -docker_only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    deploy:
+      mode: global
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - netmon
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  prometheus:
+    image: stefanprodan/prometheus-swarm
+    ports:
+      - "9090:9090"
+    networks:
+      - netmon
+    command:
+      - '-config.file=/etc/prometheus/prometheus.yml'
+      - '-storage.local.path=/prometheus'
+      - '-web.console.libraries=/etc/prometheus/console_libraries'
+      - '-web.console.templates=/etc/prometheus/consoles'
+      - '-storage.local.target-heap-size=1073741824'
+      - '-storage.local.retention=24h'
+      #- '-alertmanager.url=http://alertmanager:9093'
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
