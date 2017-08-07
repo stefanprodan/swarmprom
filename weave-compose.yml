@@ -42,6 +42,22 @@ services:
         constraints:
           - node.role == manager
 
+  node-exporter:
+    image: prom/node-exporter
+    networks:
+      - netmon
+    hostname: '{{.Node.ID}}'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+       - '-collector.procfs /host/proc'
+       - '-collector.sysfs /host/sys'
+       - '-collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($$|/)"'
+    deploy:
+      mode: global
+
   prometheus:
     image: stefanprodan/prometheus-swarm
     ports:
