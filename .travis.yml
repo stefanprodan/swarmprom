@@ -1,0 +1,13 @@
+sudo: required
+
+services:
+  - docker
+
+before_script:
+  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+
+script:
+  - cd prometheus && docker build -t stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER .
+  - docker tag stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-prometheus:latest
+  - docker tag stefanprodan/swarmprom-prometheus:latest
+
