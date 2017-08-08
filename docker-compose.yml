@@ -52,7 +52,8 @@ services:
     image: prom/node-exporter
     networks:
       - netmon
-    hostname: '{{.Node.ID}}'
+    environment:
+      - NODE_ID='{{.Node.ID}}'
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
