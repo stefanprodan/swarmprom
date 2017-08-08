@@ -2,7 +2,7 @@ FROM prom/prometheus:v1.7.1
 
 ENV WEAVE_TOKEN=none
 
-COPY . /etc/prometheus/
+COPY conf /etc/prometheus/
 
 ENTRYPOINT [ "/etc/prometheus/docker-entrypoint.sh" ]
 CMD        [ "-config.file=/etc/prometheus/prometheus.yml", \
