@@ -49,7 +49,7 @@ services:
           - node.role == manager
 
   node-exporter:
-    image: prom/node-exporter
+    image: stefanprodan/swarmprom-node-exporter
     networks:
       - netmon
     environment:

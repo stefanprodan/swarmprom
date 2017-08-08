@@ -1,5 +1,7 @@
 sudo: required
 
+language: go
+
 services:
   - docker
 
@@ -10,5 +12,6 @@ script:
   - cd prometheus && docker build -t stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER .
   - docker tag stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-prometheus:latest
   - docker push stefanprodan/swarmprom-prometheus:latest
-  - ls
-
+  - cd .. && cd node-exporter && docker build -t stefanprodan/swarmprom-node-exporter:$TRAVIS_BUILD_NUMBER .
+  - docker tag stefanprodan/swarmprom-node-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-node-exporter:latest
+  - docker push stefanprodan/swarmprom-node-exporter:latest
