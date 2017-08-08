@@ -3,6 +3,10 @@ version: "3"
 networks:
   netmon:
 
+volumes:
+    prometheus: {}
+    grafana: {}
+
 services:
   dockerd-exporter:
     image: stefanprodan/dockerd-exporter
@@ -35,6 +39,8 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana:/var/lib/grafana
     deploy:
       mode: replicated
       replicas: 1
@@ -52,9 +58,9 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-       - '-collector.procfs /host/proc'
-       - '-collector.sysfs /host/sys'
-       - '-collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($$|/)"'
+      - '-collector.procfs=/host/proc'
+      - '-collector.sysfs=/host/sys'
+      - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
     deploy:
       mode: global
 
@@ -72,6 +78,8 @@ services:
       - '-storage.local.target-heap-size=1073741824'
       - '-storage.local.retention=24h'
       #- '-alertmanager.url=http://alertmanager:9093'
+    volumes:
+      - prometheus:/prometheus
     deploy:
       mode: replicated
       replicas: 1
