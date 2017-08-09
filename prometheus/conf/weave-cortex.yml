@@ -10,17 +10,7 @@ global:
   external_labels:
     monitor: 'promswarm'
 
-rule_files:
-  - "swarm_task.rules"
-
 scrape_configs:
-#  - job_name: 'prometheus'
-#    dns_sd_configs:
-#    - names:
-#      - 'tasks.prometheus'
-#      type: 'A'
-#      port: 9090
-
   - job_name: 'dockerd-exporter'
     dns_sd_configs:
     - names:
