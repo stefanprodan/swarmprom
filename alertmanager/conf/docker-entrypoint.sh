@@ -9,4 +9,3 @@ mv /tmp/alertmanager.yml /etc/alertmanager/alertmanager.yml
 set -- /bin/alertmanager "$@"
 
 exec "$@"
-
