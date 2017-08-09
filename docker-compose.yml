@@ -102,7 +102,7 @@ services:
       - '-web.console.templates=/etc/prometheus/consoles'
       - '-storage.local.target-heap-size=1073741824'
       - '-storage.local.retention=24h'
-      #- '-alertmanager.url=http://alertmanager:9093'
+      - '-alertmanager.url=http://alertmanager:9093'
     volumes:
       - prometheus:/prometheus
     deploy:
