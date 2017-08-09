@@ -53,15 +53,17 @@ services:
     networks:
       - netmon
     environment:
-      - NODE_ID='{{.Node.ID}}'
+      - NODE_ID={{.Node.ID}}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
+      - '-collector.textfile.directory=/etc/node-exporter/'
       - '-collector.procfs=/host/proc'
       - '-collector.sysfs=/host/sys'
       - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '-collectors.enabled=textfile,conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,time,vmstat'
     deploy:
       mode: global
 
