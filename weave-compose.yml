@@ -9,9 +9,12 @@ volumes:
 
 services:
   dockerd-exporter:
-    image: stefanprodan/dockerd-exporter
+    image: stefanprodan/swarmprom-dockerd-exporter
     networks:
       - netmon
+    environment:
+      - IN=172.18.0.1:9323
+      - OUT=9323
     deploy:
       mode: global
 

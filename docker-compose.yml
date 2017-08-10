@@ -10,9 +10,12 @@ volumes:
 
 services:
   dockerd-exporter:
-    image: stefanprodan/dockerd-exporter
+    image: stefanprodan/swarmprom-dockerd-exporter
     networks:
       - netmon
+    environment:
+      - IN=172.18.0.1:9323
+      - OUT=9323
     deploy:
       mode: global
 
@@ -56,8 +59,8 @@ services:
     ports:
      - "9093:9093"
     environment:
-      SLACK_URL: ${SLACK_URL}
-      SLACK_CHANNEL: ${SLACK_CHANNEL}
+      - SLACK_URL=${SLACK_URL}
+      - SLACK_CHANNEL=${SLACK_CHANNEL}
     command:
       - '-config.file=/etc/alertmanager/alertmanager.yml'
       - '-storage.path=/alertmanager'
