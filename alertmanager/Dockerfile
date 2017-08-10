@@ -6,6 +6,5 @@ ENV SLACK_URL=none \
 COPY conf /etc/alertmanager/
 
 ENTRYPOINT  [ "/etc/alertmanager/docker-entrypoint.sh" ]
-ENTRYPOINT [ "/bin/alertmanager" ]
 CMD        [ "-config.file=/etc/alertmanager/alertmanager.yml", \
              "-storage.path=/alertmanager" ]
