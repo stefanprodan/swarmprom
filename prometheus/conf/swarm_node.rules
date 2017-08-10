@@ -1,4 +1,3 @@
-
 ALERT node_high_cpu_usage_50
   IF (100 - (avg(irate(node_cpu{mode="idle"}[1m])  * on(instance) group_left(node_id) node_id * 100) by (node_id))) > 50
   FOR 1m
@@ -7,3 +6,10 @@ ALERT node_high_cpu_usage_50
       description = "Swarm node {{ $labels.node_id }} CPU usage is at {{ humanize $value}}%.",
   }
 
+ALERT node_high_memory_usage
+  IF sum(((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * on(instance) group_left(node_id) node_id) by (node_id) * 100 > 30
+  FOR 1m
+  ANNOTATIONS {
+      summary = "Memory alert for Swarm node '{{ $labels.node_id }}'",
+      description = "Swarm node {{ $labels.node_id }} memory usage is at {{ humanize $value}}%.",
+  }
