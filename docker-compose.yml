@@ -61,6 +61,7 @@ services:
     environment:
       - SLACK_URL=${SLACK_URL}
       - SLACK_CHANNEL=${SLACK_CHANNEL}
+      - SLACK_USER=${SLACK_USER}
     command:
       - '-config.file=/etc/alertmanager/alertmanager.yml'
       - '-storage.path=/alertmanager'
