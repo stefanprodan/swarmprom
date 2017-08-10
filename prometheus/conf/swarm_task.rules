@@ -1,16 +1,16 @@
 
-ALERT task_high_cpu_usage_2c
-  IF sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~".+"}[5m])) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 50
-  FOR 5m
+ALERT task_high_cpu_usage_50
+  IF sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 50
+  FOR 1m
   ANNOTATIONS {
       summary = "CPU alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'",
-      description = "{{ $labels.container_label_com_docker_swarm_task_name }} CPU usage is {{ humanize $value}}%.",
+      description = "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' CPU usage is at {{ humanize $value}}%.",
   }
 
 ALERT task_high_memory_usage_1g
-  IF sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (instance,container_label_com_docker_swarm_node_id) > 1000000000
-  FOR 5m
+  IF sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_node_id) > 1000000000
+  FOR 1m
   ANNOTATIONS {
       summary = "Memory alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'",
-      description = "{{ $labels.container_label_com_docker_swarm_task_name }} memory usage is {{ humanize $value}}.",
+      description = "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}.",
   }

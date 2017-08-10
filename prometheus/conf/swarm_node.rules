@@ -4,6 +4,6 @@ ALERT node_high_cpu_usage_50
   FOR 1m
   ANNOTATIONS {
       summary = "CPU alert for Swarm node '{{ $labels.node_id }}'",
-      description = "Swarm node {{ $labels.node_id }} CPU usage is {{ humanize $value}}%.",
+      description = "Swarm node {{ $labels.node_id }} CPU usage is at {{ humanize $value}}%.",
   }
 
