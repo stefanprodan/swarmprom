@@ -6,6 +6,7 @@ global:
     monitor: 'promswarm'
 
 rule_files:
+  - "swarm_node.rules"
   - "swarm_task.rules"
 
 scrape_configs:
