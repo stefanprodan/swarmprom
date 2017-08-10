@@ -1,6 +1,6 @@
 
 ALERT node_high_cpu_usage_50
-  IF (100 - (avg(irate(node_cpu{mode="idle"}[1m])  * on(instance) group_left(node_id) node_id{node_id=~".+"} * 100) by (node_id))) > 50
+  IF (100 - (avg(irate(node_cpu{mode="idle"}[1m])  * on(instance) group_left(node_id) node_id * 100) by (node_id))) > 50
   FOR 1m
   ANNOTATIONS {
       summary = "CPU alert for Swarm node '{{ $labels.node_id }}'",
