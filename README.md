@@ -1,16 +1,25 @@
-# prometheus-swarm
+# swarmprom
 
-Docker Swarm instrumentation with Prometheus
+Docker Swarm instrumentation with 
+Prometheus, node-exporter, dockerd-exporter, cAdvisor, alertmanager and Grafana
 
-Run stack with standalone Prometheus, dockerd-exporter, cAdvisor and Grafana:
+### Install
+
+Clone this repository and run the monitoring stack:
 
 ```bash
-docker stack deploy -c docker-compose.yml mon
+$ git clone https://github.com/stefanprodan/swarmprom.git
+$ cd swarmprom
+
+SLACK_URL=https://hooks.slack.com/services/TOKEN \
+SLACK_CHANNEL=devops-alerts \
+SLACK_USER=alertmanager \
+docker stack deploy -c docker-compose.yml sp
 ```
 
-Run stack with Weave Cloud remote write:
+Run the stack with Weave Cloud remote write:
 
 ```bash
-TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml weave
+TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml sw
 ``` 
 
