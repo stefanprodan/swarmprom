@@ -1,4 +1,4 @@
-ALERT node_high_cpu_usage_50
+ALERT node_high_cpu_usage
   IF (100 - (avg(irate(node_cpu{mode="idle"}[1m])  * on(instance) group_left(node_id) node_id * 100) by (node_id))) > 50
   FOR 1m
   ANNOTATIONS {
@@ -7,9 +7,25 @@ ALERT node_high_cpu_usage_50
   }
 
 ALERT node_high_memory_usage
-  IF sum(((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * on(instance) group_left(node_id) node_id) by (node_id) * 100 > 30
+  IF ((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * on(instance) group_left(node_id) node_id * 100 > 30
   FOR 1m
   ANNOTATIONS {
       summary = "Memory alert for Swarm node '{{ $labels.node_id }}'",
       description = "Swarm node {{ $labels.node_id }} memory usage is at {{ humanize $value}}%.",
+  }
+
+ALERT node_high_disk_usage
+  IF ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"}) * 100 / node_filesystem_size{mountpoint="/"}) * on(instance) group_left(node_id) node_id > 85
+  FOR 1m
+  ANNOTATIONS {
+      summary = "Disk alert for Swarm node '{{ $labels.node_id }}'",
+      description = "Swarm node {{ $labels.node_id }} disk usage is at {{ humanize $value}}%.",
+  }
+
+ALERT node_disk_fill_rate_6h
+  IF predict_linear(node_filesystem_free{mountpoint="/"}[1h], 6*3600) * on(instance) group_left(node_id) node_id < 0
+  FOR 1m
+  ANNOTATIONS {
+      summary = "Disk fill alert for Swarm node '{{ $labels.node_id }}'",
+      description = "Swarm node {{ $labels.node_id }} disk is going to fill up in 6h.",
   }
