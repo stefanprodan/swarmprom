@@ -1,7 +1,9 @@
-version: "3"
+version: "3.3"
 
 networks:
   netmon:
+    driver: overlay
+    attachable: true
 
 volumes:
     prometheus: {}
@@ -45,28 +47,6 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana:/var/lib/grafana
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-
-  alertmanager:
-    image: stefanprodan/swarmprom-alertmanager
-    networks:
-      - netmon
-    ports:
-     - "9093:9093"
-    environment:
-      - SLACK_URL=${SLACK_URL}
-      - SLACK_CHANNEL=${SLACK_CHANNEL}
-      - SLACK_USER=${SLACK_USER}
-    command:
-      - '-config.file=/etc/alertmanager/alertmanager.yml'
-      - '-storage.path=/alertmanager'
-    volumes:
-      - alertmanager:/alertmanager
     deploy:
       mode: replicated
       replicas: 1

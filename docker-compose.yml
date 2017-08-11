@@ -1,7 +1,9 @@
-version: "3"
+version: "3.3"
 
 networks:
   netmon:
+    driver: overlay
+    attachable: true
 
 volumes:
     prometheus: {}
