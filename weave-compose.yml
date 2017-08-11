@@ -6,6 +6,7 @@ networks:
 volumes:
     prometheus: {}
     grafana: {}
+    alertmanager: {}
 
 services:
   dockerd-exporter:
@@ -51,6 +52,28 @@ services:
         constraints:
           - node.role == manager
 
+  alertmanager:
+    image: stefanprodan/swarmprom-alertmanager
+    networks:
+      - netmon
+    ports:
+     - "9093:9093"
+    environment:
+      - SLACK_URL=${SLACK_URL}
+      - SLACK_CHANNEL=${SLACK_CHANNEL}
+      - SLACK_USER=${SLACK_USER}
+    command:
+      - '-config.file=/etc/alertmanager/alertmanager.yml'
+      - '-storage.path=/alertmanager'
+    volumes:
+      - alertmanager:/alertmanager
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter
     networks:
@@ -61,6 +84,7 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - /etc/hostname:/etc/nodename
     command:
       - '-collector.textfile.directory=/etc/node-exporter/'
       - '-collector.procfs=/host/proc'
