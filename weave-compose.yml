@@ -8,7 +8,6 @@ networks:
 volumes:
     prometheus: {}
     grafana: {}
-    alertmanager: {}
 
 services:
   dockerd-exporter:

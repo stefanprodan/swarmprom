@@ -1,0 +1,21 @@
+version: "3.3"
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+services:
+  redis:
+    image: healthcheck/redis:alpine
+    networks:
+      - net
+    deploy:
+      mode: global
+
+  mongo:
+    image: healthcheck/mongo:latest
+    networks:
+      - net
+    deploy:
+      mode: global
