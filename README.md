@@ -115,14 +115,81 @@ The above result is not very helpful since you can't tell what Swarm node is beh
 Let's write that query taking in account the node_meta metric:
 
 ```sql
-sum(node_memory_MemAvailable * on(instance) group_left(node_name) node_meta) by (node_name)
+sum(node_memory_MemAvailable * on(instance) group_left(node_id, node_name) node_meta) by (node_id, node_name)
 
-{node_name="swarm-manager-1"} 889450496
-{node_name="swarm-worker-1"} 1404162048
-{node_name="swarm-worker-2"} 1406574592
+{node_id="wrdvtftteo0uaekmdq4dxrn14",node_name="swarm-manager-1"} 889450496
+{node_id="moggm3uaq8tax9ptr1if89pi7",node_name="swarm-worker-1"} 1404162048
+{node_id="vkdfx99mm5u4xl2drqhnwtnsv",node_name="swarm-worker-2"} 1406574592
 ``` 
 
-This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes hostname.
+This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes ID and hostname.
+
+Knowing the hostname of your nods is useful for alerting also. 
+You can define an alert when available memory reaches 10% and you will receiving the hostname in the alert message 
+and not some overlay IP that you can't correlate to a infrastructure item. 
+
+Maybe you are wandering why you'll need the node ID if you have the hostname. The node ID will help you match 
+node-exporter instances to cAdvisor instances. All metrics exported by cAdvisor have a label named `container_label_com_docker_swarm_node_id`, 
+this label can be used to filter containers metrics by Swarm nods. 
+
+Let's write a query to find out how many containers are running on a Swarm node. 
+Knowing from the `node_meta` metric all the nodes IDs you can define a filter with them in Grafana. 
+Assuming the filter is `$node_id` the container count query should look like this:
+
+```
+count(rate(container_last_seen{container_label_com_docker_swarm_node_id=~"$node_id"}[5m])) 
+```
+
+Another use case for node ID is filtering the metrics provided by the Docker engine daemon. 
+Docker engine doesn't have a label with the node ID attached on every metric but there is a `swarm_node_info` 
+metric that has this label.  If you want to find out the number of failed health checks on a Swarm node 
+you would write a query like this:
+
+```
+sum(engine_daemon_health_checks_failed_total) * on(instance) group_left(node_id) swarm_node_info{node_id=~"$node_id"})  
+```
+
+For now the engine metrics are still experimental. If you want to use dockerd-exporter you will need to enable 
+the experimental feature and and set the metrics address to 0.0.0.0.
+
+If you running Docker with systemd this is how the config file should look like:
+
+```
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// \
+  --storage-driver=overlay2 \
+  --dns 8.8.4.4 --dns 8.8.8.8 \
+  --log-driver json-file \
+  --log-opt max-size=50m --log-opt max-file=10 \
+  --experimental=true \
+  --metrics-addr 0.0.0.0:9323
+```
+
+Check if the docker_gwbridge ip address is 172.18.0.1:
+
+```bash
+ip -o addr show docker_gwbridge
+```
+
+Configure dockerd-exporter as global service and replace 172.18.0.1 with your docker_gwbridge address:
+
+```yaml
+  dockerd-exporter:
+    image: stefanprodan/swarmprom-dockerd-exporter
+    networks:
+      - netmon
+    environment:
+      - IN=172.18.0.1:9323
+      - OUT=9323
+    deploy:
+      mode: global
+```
+
+Collecting Docker Swarm metrics with Prometheus is not a smooth process and 
+because of `group_left` queries tend to become more complex.
+In the future I hope Swarm DNS will contain the SRV record for hostname and Docker engine 
+metrics will expose container metrics replacing cAdvisor all together. 
 
 ### Setup Grafana
 
