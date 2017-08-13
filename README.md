@@ -26,12 +26,103 @@ TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml sw
 Services:
 
 * prometheus (metrics database) `http://<swarm-ip>:9090`
-* alertmanager (alerts management) `http://<swarm-ip>:9093`
 * grafana (visualize metrics) `http://<swarm-ip>:3000`
 * node-exporter (host metrics collector)
 * cadvisor (containers metrics collector)
 * dockerd-exporter (Docker daemon metrics collector)
+* alertmanager (alerts dispatcher) `http://<swarm-ip>:9093`
 
+### Prometheus service discovery 
+
+In order to collect metrics from Swarm nodes you need to deploy the exporters on each server. 
+Using global services you don't have to manually deploy the exporters. When you scale up your 
+cluster, Swarm will lunch a cAdvisor, node-exporter and dockerd-exporter instance on the newly created nodes. Using global services you don't have to manually 
+All you need is an automated way for Prometheus to reach these instances.
+
+Running Prometheus on the same overlay network as the exporter services allows you to use the DNS service 
+discovery. Knowing the exporters service name you can configure DNS discovery like so:
+
+```yaml
+scrape_configs:
+  - job_name: 'node-exporter'
+    dns_sd_configs:
+    - names:
+      - 'tasks.node-exporter'
+      type: 'A'
+      port: 9100
+  - job_name: 'cadvisor'
+    dns_sd_configs:
+    - names:
+      - 'tasks.cadvisor'
+      type: 'A'
+      port: 8080
+  - job_name: 'dockerd-exporter'
+    dns_sd_configs:
+    - names:
+      - 'tasks.dockerd-exporter'
+      type: 'A'
+      port: 9323
+``` 
+
+When Prometheus runs the DNS lookup, the Docker Swarm will return a list of IPs for each task. 
+Using these IPs Prometheus will bypass the Swarm load balancer and will be able to scrape each exporter 
+instance. 
+
+The problem with this approach is that you'll not be able to tell which exporter runs on which node. 
+Your Swarm nodes real IPs are different form the exporters IPs since exporters IPs are dynamically 
+assigned by Docker and are part of the overlay network. 
+Swarm doesn't provide any records for the tasks DNS besides the overlay IP. 
+If Swarm would provide SRV records with the nodes hostname or IP you would be able to relabel the source 
+and overwrite the overlay IP with the real IP. 
+
+In order to tell which host a node-exporter instance is running, I had to create a prom file inside 
+the node-exporter containing the hostname and the Docker Swarm node ID. 
+
+When a node-exporter container starts `node-meta.prom` is generated with the following content:
+
+```bash
+"node_meta{node_id=\"$NODE_ID\", node_name=\"$NODE_NAME\"} 1"
+```
+
+The node ID value is supplied via `{{.Node.ID}}` and the node name is extracted from the `/etc/hostname` 
+file that's mounted inside the node-exporter container.
+
+```yaml
+  node-exporter:
+    image: stefanprodan/swarmprom-node-exporter
+    environment:
+      - NODE_ID={{.Node.ID}}
+    volumes:
+      - /etc/hostname:/etc/nodename
+    command:
+      - '-collector.textfile.directory=/etc/node-exporter/'
+```
+
+Using the textfile command you can instruct node-exporter to collect the `node_meta` metric. 
+Now that you have a metric containing Docker Swarm node ID and name you can use it in promql queries. 
+
+Let's say you want to find the available memory on each node, normally you would write something like this:
+
+```
+sum(node_memory_MemAvailable) by (instance)
+
+{instance="10.0.0.5:9100"} 889450496
+{instance="10.0.0.13:9100"} 1404162048
+{instance="10.0.0.15:9100"} 1406574592
+```
+
+The above result is not very helpful since you can't tell what Swarm node is behind the instance IP. 
+Let's write that query taking in account the node_meta metric:
+
+```sql
+sum(node_memory_MemAvailable * on(instance) group_left(node_name) node_meta) by (node_name)
+
+{node_name="swarm-manager-1"} 889450496
+{node_name="swarm-worker-1"} 1404162048
+{node_name="swarm-worker-2"} 1406574592
+``` 
+
+This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes hostname.
 
 ### Setup Grafana
 
