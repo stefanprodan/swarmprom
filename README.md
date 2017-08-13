@@ -149,10 +149,11 @@ you would write a query like this:
 sum(engine_daemon_health_checks_failed_total) * on(instance) group_left(node_id) swarm_node_info{node_id=~"$node_id"})  
 ```
 
-For now the engine metrics are still experimental. If you want to use dockerd-exporter you will need to enable 
-the experimental feature and and set the metrics address to 0.0.0.0.
+For now the engine metrics are still experimental. If you want to use dockerd-exporter you have to enable 
+the experimental feature and set the metrics address to `0.0.0.0`.
 
-If you running Docker with systemd this is how the config file should look like:
+If you are running Docker with systemd create or edit
+/etc/systemd/system/docker.service.d/docker.conf file like so:
 
 ```
 [Service]
@@ -160,8 +161,6 @@ ExecStart=
 ExecStart=/usr/bin/dockerd -H fd:// \
   --storage-driver=overlay2 \
   --dns 8.8.4.4 --dns 8.8.8.8 \
-  --log-driver json-file \
-  --log-opt max-size=50m --log-opt max-file=10 \
   --experimental=true \
   --metrics-addr 0.0.0.0:9323
 ```
@@ -247,3 +246,85 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 * Cluster network traffic and IOPS graphs
 * Docker engine container and network actions by node
 * Docker engine list (version, node id, OS, kernel, graph driver)
+
+## Configure alerting 
+
+The Prometheus swarmprom image contains the following alert rules:
+
+***Swarm Node CPU Usage***
+
+Alerts when a node CPU usage goes over 80% for five minutes.
+
+```
+ALERT node_cpu_usage
+  IF 100 - (avg(irate(node_cpu{mode="idle"}[1m])  * on(instance) group_left(node_name) node_meta * 100) by (node_name)) > 80
+  FOR 5m
+  LABELS      { severity="warning" }
+  ANNOTATIONS {
+      summary = "CPU alert for Swarm node '{{ $labels.node_name }}'",
+      description = "Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize $value}}%.",
+  }
+``` 
+***Swarm Node Memory Alert***
+
+Alerts when a node memory usage goes over 80% for five minutes.
+
+```
+ALERT node_memory_usage
+  IF sum(((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * on(instance) group_left(node_name) node_meta * 100) by (node_name) > 80
+  FOR 5m
+  LABELS      { severity="warning" }
+  ANNOTATIONS {
+      summary = "Memory alert for Swarm node '{{ $labels.node_name }}'",
+      description = "Swarm node {{ $labels.node_name }} memory usage is at {{ humanize $value}}%.",
+  }
+```
+***Swarm Node Disk Alert***
+
+Alerts when a node storage usage goes over 85% for five minutes.
+
+```
+ALERT node_disk_usage
+  IF ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"}) * 100 / node_filesystem_size{mountpoint="/"}) * on(instance) group_left(node_name) node_meta > 85
+  FOR 5m
+  LABELS      { severity="warning" }
+  ANNOTATIONS {
+      summary = "Disk alert for Swarm node '{{ $labels.node_name }}'",
+      description = "Swarm node {{ $labels.node_name }} disk usage is at {{ humanize $value}}%.",
+  }
+```
+
+***Swarm Node Disk Fill Rate Alert***
+
+Alerts when a node storage is going to remain out of free space in six hours.
+
+```
+ALERT node_disk_fill_rate_6h
+  IF predict_linear(node_filesystem_free{mountpoint="/"}[1h], 6*3600) * on(instance) group_left(node_name) node_meta < 0
+  FOR 1h
+  LABELS      { severity="critical" }
+  ANNOTATIONS {
+      summary = "Disk fill alert for Swarm node '{{ $labels.node_name }}'",
+      description = "Swarm node {{ $labels.node_name }} disk is going to fill up in 6h.",
+  }
+```
+
+In order to receive alerts on Slack you have to provide the Slack API url, 
+username and channel via environment variables:
+
+```yaml
+  alertmanager:
+    image: stefanprodan/swarmprom-alertmanager
+    networks:
+      - netmon
+    ports:
+     - "9093:9093"
+    environment:
+      - SLACK_URL=${SLACK_URL}
+      - SLACK_CHANNEL=${SLACK_CHANNEL}
+      - SLACK_USER=${SLACK_USER}
+```
+
+If you want to add alert rules to Prometheus you will have to build and publish your own image to Docker Hub 
+or to another repo that your Swarm cluster has access to. For swarmprom I'm using Travis CI to build and publish 
+the images since it's free for open source project.
