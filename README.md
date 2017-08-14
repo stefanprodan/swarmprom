@@ -176,8 +176,6 @@ Configure dockerd-exporter as global service and replace 172.18.0.1 with your do
 ```yaml
   dockerd-exporter:
     image: stefanprodan/swarmprom-dockerd-exporter
-    networks:
-      - netmon
     environment:
       - IN=172.18.0.1:9323
       - OUT=9323
@@ -309,21 +307,20 @@ ALERT node_disk_fill_rate_6h
   }
 ```
 
+The Alertmanager swarmprom image is configured with the Slack receiver. 
 In order to receive alerts on Slack you have to provide the Slack API url, 
 username and channel via environment variables:
 
 ```yaml
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager
-    networks:
-      - netmon
-    ports:
-     - "9093:9093"
     environment:
       - SLACK_URL=${SLACK_URL}
       - SLACK_CHANNEL=${SLACK_CHANNEL}
       - SLACK_USER=${SLACK_USER}
 ```
+
+You can install the `stress` package with apt and test out the CPU alert, you should receive something like this:
 
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/alertmanager-slack-v2.png)
 
