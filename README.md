@@ -325,7 +325,7 @@ username and channel via environment variables:
       - SLACK_USER=${SLACK_USER}
 ```
 
-![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/alertmanager-slack-v1.png)
+![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/alertmanager-slack-v2.png)
 
 
 If you want to add alert rules to Prometheus you will have to build and publish your own image to Docker Hub 
