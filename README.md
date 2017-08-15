@@ -1,7 +1,10 @@
 # swarmprom
 
-Docker Swarm instrumentation with 
-Prometheus, node-exporter, dockerd-exporter, cAdvisor, alertmanager and Grafana
+A monitoring solution for Docker Swarm nodes and services with [Prometheus](https://prometheus.io/), 
+[Grafana](http://grafana.org/), 
+[cAdvisor](https://github.com/google/cadvisor), 
+[Node Exporter](https://github.com/prometheus/node_exporter) 
+and alerting with [Alert Manager](https://github.com/prometheus/alertmanager).
 
 ### Install
 
@@ -312,8 +315,8 @@ You can install the `stress` package with apt and test out the CPU alert, you sh
 
 ### Monitoring production systems
 
-The swarmprom project is meant as a stating point in developing your own monitoring solution. Before running this 
-in production you should consider building and publishing your own Prometheus, node-exporter and alert manager 
+The swarmprom project is meant as a starting point in developing your own monitoring solution. Before running this 
+in production you should consider building and publishing your own Prometheus, node exporter and alert manager 
 images. Docker Swarm doesn't play well with locally built images, the first step would be to setup a secure Docker 
 registry that your Swarm has access to and push the images there. Your CI system should assign version tags to each 
 image. Don't rely on the latest tag for continuous deployments, Prometheus will soon reach v2 and the data store 
@@ -327,8 +330,8 @@ metrics database but you can also define alerts and use it as a data source four
 Having the alerting and monitoring system hosted on a different platform other than your production 
 it's good practice that will allow your to react quickly and efficiently when major disaster strikes. 
 
-Swarmprom comes with built-in Weave Cloud integration, what you need to do is run swarmprom with your Weave 
-service token:
+Swarmprom comes with built-in []Weave Cloud](https://www.weave.works/product/cloud/) integration, 
+what you need to do is run swarmprom with your Weave service token:
 
 ```bash
 TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml weavemon
@@ -338,7 +341,7 @@ This will deploy Prometheus with Weave Cortex as remote write. The local retenti
 internet connection drops you'll not lose data as Prometheus will retry pushing data to Weave Cloud when the 
 connection is up again.
 
-The Weave stack doesn't contain alert manager since you can configure all your alerts in Weave Cloud in the same way.
+You can define alerts and notifications routes in Weave Cloud in the same way you would do with alert manager.
 
 To use Grafana with Weave Cloud you have to configure the data source like this:
 
@@ -347,6 +350,7 @@ To use Grafana with Weave Cloud you have to configure the data source like this:
 * Url: https://cloud.weave.works/api/prom
 * Access: proxy
 * Basic auth: use your service token as password, the user value is ignored
+
 
 
 
