@@ -17,12 +17,6 @@ SLACK_USER=alertmanager \
 docker stack deploy -c docker-compose.yml sp
 ```
 
-Run the stack with Weave Cloud remote write:
-
-```bash
-TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml sw
-``` 
-
 Services:
 
 * prometheus (metrics database) `http://<swarm-ip>:9090`
@@ -36,11 +30,11 @@ Services:
 
 In order to collect metrics from Swarm nodes you need to deploy the exporters on each server. 
 Using global services you don't have to manually deploy the exporters. When you scale up your 
-cluster, Swarm will lunch a cAdvisor, node-exporter and dockerd-exporter instance on the newly created nodes. Using global services you don't have to manually 
+cluster, Swarm will lunch a cAdvisor, node-exporter and dockerd-exporter instance on the newly created nodes. 
 All you need is an automated way for Prometheus to reach these instances.
 
 Running Prometheus on the same overlay network as the exporter services allows you to use the DNS service 
-discovery. Knowing the exporters service name you can configure DNS discovery like so:
+discovery. Knowing the exporters service name you can configure DNS discovery like the following:
 
 ```yaml
 scrape_configs:
@@ -64,14 +58,14 @@ scrape_configs:
       port: 9323
 ``` 
 
-When Prometheus runs the DNS lookup, the Docker Swarm will return a list of IPs for each task. 
-Using these IPs Prometheus will bypass the Swarm load balancer and will be able to scrape each exporter 
+When Prometheus runs the DNS lookup, Docker Swarm will return a list of IPs for each task. 
+Using these IPs Prometheus will bypass the Swarm load-balancer and will be able to scrape each exporter 
 instance. 
 
 The problem with this approach is that you'll not be able to tell which exporter runs on which node. 
 Your Swarm nodes real IPs are different form the exporters IPs since exporters IPs are dynamically 
 assigned by Docker and are part of the overlay network. 
-Swarm doesn't provide any records for the tasks DNS besides the overlay IP. 
+Swarm doesn't provide any records for the tasks DNS, besides the overlay IP. 
 If Swarm would provide SRV records with the nodes hostname or IP you would be able to relabel the source 
 and overwrite the overlay IP with the real IP. 
 
@@ -112,7 +106,7 @@ sum(node_memory_MemAvailable) by (instance)
 ```
 
 The above result is not very helpful since you can't tell what Swarm node is behind the instance IP. 
-Let's write that query taking in account the node_meta metric:
+So let's write that query taking in account the node_meta metric:
 
 ```sql
 sum(node_memory_MemAvailable * on(instance) group_left(node_id, node_name) node_meta) by (node_id, node_name)
@@ -122,13 +116,12 @@ sum(node_memory_MemAvailable * on(instance) group_left(node_id, node_name) node_
 {node_id="vkdfx99mm5u4xl2drqhnwtnsv",node_name="swarm-worker-2"} 1406574592
 ``` 
 
-This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes ID and hostname.
+This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes ID and hostname. Knowing the hostname of your nods is useful for alerting also. 
 
-Knowing the hostname of your nods is useful for alerting also. 
-You can define an alert when available memory reaches 10% and you will receiving the hostname in the alert message 
+You can define an alert when available memory reaches 10% and you will receive the hostname in the alert message 
 and not some overlay IP that you can't correlate to a infrastructure item. 
 
-Maybe you are wandering why you'll need the node ID if you have the hostname. The node ID will help you match 
+Maybe you are wondering why you need the node ID if you have the hostname. The node ID will help you match 
 node-exporter instances to cAdvisor instances. All metrics exported by cAdvisor have a label named `container_label_com_docker_swarm_node_id`, 
 this label can be used to filter containers metrics by Swarm nods. 
 
@@ -141,7 +134,7 @@ count(rate(container_last_seen{container_label_com_docker_swarm_node_id=~"$node_
 ```
 
 Another use case for node ID is filtering the metrics provided by the Docker engine daemon. 
-Docker engine doesn't have a label with the node ID attached on every metric but there is a `swarm_node_info` 
+Docker engine doesn't have a label with the node ID attached on every metric, but there is a `swarm_node_info` 
 metric that has this label.  If you want to find out the number of failed health checks on a Swarm node 
 you would write a query like this:
 
@@ -183,7 +176,7 @@ Configure dockerd-exporter as global service and replace 172.18.0.1 with your do
       mode: global
 ```
 
-Collecting Docker Swarm metrics with Prometheus is not a smooth process and 
+Collecting Docker Swarm metrics with Prometheus is not a smooth process, and 
 because of `group_left` queries tend to become more complex.
 In the future I hope Swarm DNS will contain the SRV record for hostname and Docker engine 
 metrics will expose container metrics replacing cAdvisor all together. 
@@ -201,14 +194,6 @@ Use the following values to add the Prometheus service as data source:
 * Url: http://prometheus:9090
 * Access: proxy
 
-If you are using Weave Cloud:
-
-* Name: Prometheus
-* Type: Prometheus
-* Url: https://cloud.weave.works/api/prom
-* Access: proxy
-* Basic auth: use your service token as password, the user value is ignored
-
 Now you can import the dashboard temples from the [grafana](https://github.com/stefanprodan/swarmprom/tree/master/grafana) directory. 
 From the Grafana menu, choose ***Dashboards*** and click on ***Import***.
 
@@ -219,7 +204,7 @@ From the Grafana menu, choose ***Dashboards*** and click on ***Import***.
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
 
-* Cluster uptime, number of nodes, number of CPUs, CPU idle gauge
+* Cluster up-time, number of nodes, number of CPUs, CPU idle gauge
 * System load average graph, CPU usage graph by node
 * Total memory, available memory gouge, total disk space and available storage gouge
 * Memory usage graph by node (used and cached)
@@ -325,6 +310,43 @@ You can install the `stress` package with apt and test out the CPU alert, you sh
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/alertmanager-slack-v2.png)
 
 
-If you want to add alert rules to Prometheus you will have to build and publish your own image to Docker Hub 
-or to another repo that your Swarm cluster has access to. For swarmprom I'm using Travis CI to build and publish 
-the images since it's free for open source project.
+### Monitoring production systems
+
+The swarmprom project is meant as a stating point in developing your own monitoring solution. Before running this 
+in production you should consider building and publishing your own Prometheus, node-exporter and alert manager 
+images. Docker Swarm doesn't play well with locally built images, the first step would be to setup a secure Docker 
+registry that your Swarm has access to and push the images there. Your CI system should assign version tags to each 
+image. Don't rely on the latest tag for continuous deployments, Prometheus will soon reach v2 and the data store 
+will not be backwards compatible with v1.x.    
+
+Another thing that you should consider is having redundancy for Prometheus and alert manager. 
+You could run them as a service with two replicas pinned on different nodes, or even better, 
+use a service like Weave Cloud Cortex to ship your metrics outside of your current setup. 
+You can use Weave Cloud not only as a backup of your 
+metrics database but you can also define alerts and use it as a data source four your Grafana dashboards. 
+Having the alerting and monitoring system hosted on a different platform other than your production 
+it's good practice that will allow your to react quickly and efficiently when major disaster strikes. 
+
+Swarmprom comes with built-in Weave Cloud integration, what you need to do is run swarmprom with your Weave 
+service token:
+
+```bash
+TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml weavemon
+```
+
+This will deploy Prometheus with Weave Cortex as remote write. The local retention is set to 24h so even if your 
+internet connection drops you'll not lose data as Prometheus will retry pushing data to Weave Cloud when the 
+connection is up again.
+
+The Weave stack doesn't contain alert manager since you can configure all your alerts in Weave Cloud in the same way.
+
+To use Grafana with Weave Cloud you have to configure the data source like this:
+
+* Name: Prometheus
+* Type: Prometheus
+* Url: https://cloud.weave.works/api/prom
+* Access: proxy
+* Basic auth: use your service token as password, the user value is ignored
+
+
+
