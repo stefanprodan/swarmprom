@@ -1,10 +1,19 @@
 # swarmprom
 
-A monitoring solution for Docker Swarm nodes and services with [Prometheus](https://prometheus.io/), 
+If you are new to Prometheus then you should know that it's one of the best 
+open source time-series database and monitoring solution.
+The project is currently hosted by the Cloud Native Computing Foundation and has become the default 
+monitoring solution for Kubernetes and it's commercial flavors like Tectonic or Open Shift. 
+The Docker team has plans to integrate Prometheus by exposing Docker engine and containers metrics. 
+This feature is under development, you can track it's progress under "[metrics: prometheus integration road map](https://github.com/moby/moby/issues/27307)" 
+on the moby project. 
+
+Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https://prometheus.io/), 
 [Grafana](http://grafana.org/), 
 [cAdvisor](https://github.com/google/cadvisor), 
 [Node Exporter](https://github.com/prometheus/node_exporter) 
-and alerting with [Alert Manager](https://github.com/prometheus/alertmanager).
+and [Alert Manager](https://github.com/prometheus/alertmanager).
+
 
 ### Install
 
