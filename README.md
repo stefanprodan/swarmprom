@@ -335,7 +335,7 @@ registry that your Swarm has access to and push the images there. Your CI system
 image. Don't rely on the latest tag for continuous deployments, Prometheus will soon reach v2 and the data store 
 will not be backwards compatible with v1.x.    
 
-Another thing that you should consider is having redundancy for Prometheus and alert manager. 
+Another thing you should consider is having redundancy for Prometheus and alert manager. 
 You could run them as a service with two replicas pinned on different nodes, or even better, 
 use a service like Weave Cloud Cortex to ship your metrics outside of your current setup. 
 You can use Weave Cloud not only as a backup of your 
@@ -343,7 +343,7 @@ metrics database but you can also define alerts and use it as a data source four
 Having the alerting and monitoring system hosted on a different platform other than your production 
 it's good practice that will allow your to react quickly and efficiently when major disaster strikes. 
 
-Swarmprom comes with built-in []Weave Cloud](https://www.weave.works/product/cloud/) integration, 
+Swarmprom comes with built-in [Weave Cloud](https://www.weave.works/product/cloud/) integration, 
 what you need to do is run swarmprom with your Weave service token:
 
 ```bash
