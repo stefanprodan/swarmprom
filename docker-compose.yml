@@ -1,7 +1,7 @@
 version: "3.3"
 
 networks:
-  netmon:
+  net:
     driver: overlay
     attachable: true
 
@@ -14,7 +14,7 @@ services:
   dockerd-exporter:
     image: stefanprodan/swarmprom-dockerd-exporter
     networks:
-      - netmon
+      - net
     environment:
       - IN=172.18.0.1:9323
       - OUT=9323
@@ -24,7 +24,7 @@ services:
   cadvisor:
     image: google/cadvisor
     networks:
-      - netmon
+      - net
     command: -logtostderr -docker_only
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -40,7 +40,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - netmon
+      - net
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -57,7 +57,7 @@ services:
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager
     networks:
-      - netmon
+      - net
     ports:
      - "9093:9093"
     environment:
@@ -79,7 +79,7 @@ services:
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter
     networks:
-      - netmon
+      - net
     environment:
       - NODE_ID={{.Node.ID}}
     volumes:
@@ -101,7 +101,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - netmon
+      - net
     command:
       - '-config.file=/etc/prometheus/prometheus.yml'
       - '-storage.local.path=/prometheus'
