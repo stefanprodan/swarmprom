@@ -27,6 +27,8 @@ Clone this repository and run the monitoring stack:
 $ git clone https://github.com/stefanprodan/swarmprom.git
 $ cd swarmprom
 
+ADMIN_USER=admin \
+ADMIN_PASSWORD=admin \
 SLACK_URL=https://hooks.slack.com/services/TOKEN \
 SLACK_CHANNEL=devops-alerts \
 SLACK_USER=alertmanager \
@@ -41,6 +43,7 @@ Services:
 * cadvisor (containers metrics collector)
 * dockerd-exporter (Docker daemon metrics collector)
 * alertmanager (alerts dispatcher) `http://<swarm-ip>:9093`
+* caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
 
 ### Prometheus service discovery 
 
@@ -200,7 +203,8 @@ metrics will expose container metrics replacing cAdvisor all together.
 ### Setup Grafana
 
 Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password ***admin***. 
-You can change the credentials in the compose file.
+You can change the credentials in the compose file or 
+by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables at stack deploy.
 
 From the Grafana menu, choose ***Data Sources*** and click on ***Add Data Source***. 
 Use the following values to add the Prometheus service as data source:
