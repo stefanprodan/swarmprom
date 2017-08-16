@@ -118,6 +118,7 @@ services:
     ports:
       - "3000:3000"
       - "9090:9090"
+      - "9093:9093"
     networks:
       - net
     environment:
