@@ -1,12 +1,26 @@
-:80 {
+:9090 {
     basicauth / admin admin
-    proxy /prometheus prometheus:9090 {
+    proxy / prometheus:9090 {
             transparent
-            without /prometheus
         }
 
-    log stdout
-    errors stderr
-    tls off
+    import common.conf
 }
 
+:9093 {
+    basicauth / admin admin
+    proxy / alertmanager:9093 {
+            transparent
+        }
+
+    import common.conf
+}
+
+:3000 {
+    proxy / grafana:3000 {
+            transparent
+            websocket
+        }
+
+    import common.conf
+}
