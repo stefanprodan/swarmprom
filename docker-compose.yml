@@ -37,13 +37,11 @@ services:
 
   grafana:
     image: grafana/grafana
-    ports:
-      - "3000:3000"
     networks:
       - net
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD={$ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana:/var/lib/grafana
@@ -58,8 +56,6 @@ services:
     image: stefanprodan/swarmprom-alertmanager
     networks:
       - net
-    ports:
-     - "9093:9093"
     environment:
       - SLACK_URL=${SLACK_URL}
       - SLACK_CHANNEL=${SLACK_CHANNEL}
@@ -96,10 +92,25 @@ services:
     deploy:
       mode: global
 
+  caddy:
+    image: stefanprodan/swarmprom-caddy
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+    networks:
+      - net
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD={$ADMIN_PASSWORD:-admin}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
   prometheus:
     image: stefanprodan/swarmprom-prometheus
-    ports:
-      - "9090:9090"
     networks:
       - net
     command:

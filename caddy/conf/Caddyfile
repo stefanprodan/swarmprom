@@ -1,5 +1,5 @@
 :9090 {
-    basicauth / admin admin
+    basicauth / {$ADMIN_USER} {$ADMIN_PASSWORD}
     proxy / prometheus:9090 {
             transparent
         }
@@ -8,7 +8,7 @@
 }
 
 :9093 {
-    basicauth / admin admin
+    basicauth / {$ADMIN_USER} {$ADMIN_PASSWORD}
     proxy / alertmanager:9093 {
             transparent
         }
