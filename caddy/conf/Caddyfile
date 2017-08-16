@@ -1,0 +1,12 @@
+:80 {
+    basicauth / admin admin
+    proxy /prometheus prometheus:9090 {
+            transparent
+            without /prometheus
+        }
+
+    log stdout
+    errors stderr
+    tls off
+}
+
