@@ -71,23 +71,6 @@ services:
     deploy:
       mode: global
 
-  caddy:
-    image: stefanprodan/swarmprom-caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-    networks:
-      - net
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD={$ADMIN_PASSWORD:-admin}
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-
   prometheus:
     image: stefanprodan/swarmprom-prometheus
     networks:
@@ -103,6 +86,23 @@ services:
       - '-storage.local.retention=24h'
     volumes:
       - prometheus:/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  caddy:
+    image: stefanprodan/swarmprom-caddy
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+    networks:
+      - net
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
     deploy:
       mode: replicated
       replicas: 1
