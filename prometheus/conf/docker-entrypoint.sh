@@ -44,8 +44,8 @@ for job in $JOBS
 do
 echo "adding job $job"
 
-SERVICE="$(cut -d':' -f1 <<<"${job}")"
-PORT="$(cut -d':' -f2 <<<"${job}")"
+SERVICE=$(echo "$job" | cut -d":" -f1)
+PORT=$(echo "$job" | cut -d":" -f2)
 
 cat >>/tmp/prometheus.yml <<EOF
   - job_name: '${SERVICE}'

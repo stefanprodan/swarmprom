@@ -77,6 +77,7 @@ services:
       - net
     environment:
       - WEAVE_TOKEN=$TOKEN
+      - JOBS="mongo-exporter:9111 redis-exporter:9112"
     command:
       - '-config.file=/etc/prometheus/weave-cortex.yml'
       - '-storage.local.path=/prometheus'
