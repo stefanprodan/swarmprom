@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 cat /etc/prometheus/prometheus.yml > /tmp/prometheus.yml
 cat /etc/prometheus/weave-cortex.yml | \
