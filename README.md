@@ -7,13 +7,13 @@ Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https:/
 [Node Exporter](https://github.com/prometheus/node_exporter) 
 and [Alert Manager](https://github.com/prometheus/alertmanager).
 
-Since its inception at SoundCloud, Prometheus has been a rising start in the infrastructure monitoring space.
+Since its inception at SoundCloud, Prometheus has been a rising star in the infrastructure monitoring space.
 With the 2.0 release coming up, I would say Prometheus is one of the best 
-open source monitoring system and time-series database out there.
+open source monitoring system and time-series databases out there.
 The project is currently hosted by the Cloud Native Computing Foundation and has become the default 
-monitoring solution for Kubernetes and it's commercial flavors like Tectonic or Open Shift. 
+monitoring solution for Kubernetes and its commercial flavors like Tectonic or Open Shift. 
 The Docker team has plans to integrate Prometheus by exposing Docker engine and containers metrics. 
-This feature is under development, you can track it's progress under "[metrics: prometheus integration road map](https://github.com/moby/moby/issues/27307)" 
+This feature is under development, you can track its progress under "[metrics: prometheus integration road map](https://github.com/moby/moby/issues/27307)" 
 on the moby project. 
 
 If you are planning to use Docker Swarm in production, Prometheus could be the perfect candidate for 
@@ -49,11 +49,11 @@ Services:
 
 In order to collect metrics from Swarm nodes you need to deploy the exporters on each server. 
 Using global services you don't have to manually deploy the exporters. When you scale up your 
-cluster, Swarm will lunch a cAdvisor, node-exporter and dockerd-exporter instance on the newly created nodes. 
+cluster, Swarm will launch a cAdvisor, node-exporter and dockerd-exporter instance on the newly created nodes. 
 All you need is an automated way for Prometheus to reach these instances.
 
 Running Prometheus on the same overlay network as the exporter services allows you to use the DNS service 
-discovery. Knowing the exporters service name you can configure DNS discovery like the following:
+discovery. Using the exporters service name, you can configure DNS discovery:
 
 ```yaml
 scrape_configs:
@@ -78,14 +78,14 @@ scrape_configs:
 ``` 
 
 When Prometheus runs the DNS lookup, Docker Swarm will return a list of IPs for each task. 
-Using these IPs Prometheus will bypass the Swarm load-balancer and will be able to scrape each exporter 
+Using these IPs, Prometheus will bypass the Swarm load-balancer and will be able to scrape each exporter 
 instance. 
 
-The problem with this approach is that you'll not be able to tell which exporter runs on which node. 
-Your Swarm nodes real IPs are different form the exporters IPs since exporters IPs are dynamically 
+The problem with this approach is that you will not be able to tell which exporter runs on which node. 
+Your Swarm nodes' real IPs are different from the exporters IPs since exporters IPs are dynamically 
 assigned by Docker and are part of the overlay network. 
 Swarm doesn't provide any records for the tasks DNS, besides the overlay IP. 
-If Swarm would provide SRV records with the nodes hostname or IP you would be able to relabel the source 
+If Swarm provides SRV records with the nodes hostname or IP, you can re-label the source 
 and overwrite the overlay IP with the real IP. 
 
 In order to tell which host a node-exporter instance is running, I had to create a prom file inside 
@@ -98,7 +98,7 @@ When a node-exporter container starts `node-meta.prom` is generated with the fol
 ```
 
 The node ID value is supplied via `{{.Node.ID}}` and the node name is extracted from the `/etc/hostname` 
-file that's mounted inside the node-exporter container.
+file that is mounted inside the node-exporter container.
 
 ```yaml
   node-exporter:
@@ -111,8 +111,8 @@ file that's mounted inside the node-exporter container.
       - '-collector.textfile.directory=/etc/node-exporter/'
 ```
 
-Using the textfile command you can instruct node-exporter to collect the `node_meta` metric. 
-Now that you have a metric containing Docker Swarm node ID and name you can use it in promql queries. 
+Using the textfile command, you can instruct node-exporter to collect the `node_meta` metric. 
+Now that you have a metric containing the Docker Swarm node ID and name, you can use it in promql queries. 
 
 Let's say you want to find the available memory on each node, normally you would write something like this:
 
@@ -125,7 +125,7 @@ sum(node_memory_MemAvailable) by (instance)
 ```
 
 The above result is not very helpful since you can't tell what Swarm node is behind the instance IP. 
-So let's write that query taking in account the node_meta metric:
+So let's write that query taking into account the node_meta metric:
 
 ```sql
 sum(node_memory_MemAvailable * on(instance) group_left(node_id, node_name) node_meta) by (node_id, node_name)
@@ -135,14 +135,14 @@ sum(node_memory_MemAvailable * on(instance) group_left(node_id, node_name) node_
 {node_id="vkdfx99mm5u4xl2drqhnwtnsv",node_name="swarm-worker-2"} 1406574592
 ``` 
 
-This is much better, instead of overlay IPs now I can see the actual Docker Swarm nodes ID and hostname. Knowing the hostname of your nods is useful for alerting also. 
+This is much better. Instead of overlay IPs, now I can see the actual Docker Swarm nodes ID and hostname. Knowing the hostname of your nodes is useful for alerting as well. 
 
-You can define an alert when available memory reaches 10% and you will receive the hostname in the alert message 
+You can define an alert when available memory reaches 10%. You also will receive the hostname in the alert message 
 and not some overlay IP that you can't correlate to a infrastructure item. 
 
 Maybe you are wondering why you need the node ID if you have the hostname. The node ID will help you match 
 node-exporter instances to cAdvisor instances. All metrics exported by cAdvisor have a label named `container_label_com_docker_swarm_node_id`, 
-this label can be used to filter containers metrics by Swarm nods. 
+and this label can be used to filter containers metrics by Swarm nodes. 
 
 Let's write a query to find out how many containers are running on a Swarm node. 
 Knowing from the `node_meta` metric all the nodes IDs you can define a filter with them in Grafana. 
