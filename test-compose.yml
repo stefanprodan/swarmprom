@@ -4,18 +4,34 @@ networks:
   net:
     driver: overlay
     attachable: true
+  mon_net:
+    external: true
 
 services:
-  redis:
-    image: healthcheck/redis:alpine
-    networks:
-      - net
-    deploy:
-      mode: global
 
   mongo:
     image: healthcheck/mongo:latest
     networks:
       - net
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role != manager
+
+  mongo-exporter:
+    image: forekshub/percona-mongodb-exporter:latest
+    networks:
+      - net
+      - mon_net
+    ports:
+      - "9216:9216"
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
