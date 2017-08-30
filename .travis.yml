@@ -3,8 +3,12 @@ sudo: required
 services:
   - docker
 
-before_script:
-  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+  - sudo service docker restart
 
 script:
   - cd prometheus && docker build -t stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER .
@@ -12,13 +16,18 @@ script:
   - cd .. && cd alertmanager && docker build -t stefanprodan/swarmprom-alertmanager:$TRAVIS_BUILD_NUMBER .
   - cd .. && cd dockerd-exporter && docker build -t stefanprodan/swarmprom-dockerd-exporter:$TRAVIS_BUILD_NUMBER .
   - cd .. && cd caddy && docker build -t stefanprodan/swarmprom-caddy:$TRAVIS_BUILD_NUMBER .
-  - docker tag stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-prometheus:latest
-  - docker push stefanprodan/swarmprom-prometheus:latest
-  - docker tag stefanprodan/swarmprom-node-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-node-exporter:latest
-  - docker push stefanprodan/swarmprom-node-exporter:latest
-  - docker tag stefanprodan/swarmprom-alertmanager:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-alertmanager:latest
-  - docker push stefanprodan/swarmprom-alertmanager:latest
-  - docker tag stefanprodan/swarmprom-dockerd-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-dockerd-exporter:latest
-  - docker push stefanprodan/swarmprom-dockerd-exporter:latest
-  - docker tag stefanprodan/swarmprom-caddy:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-caddy:latest
-  - docker push stefanprodan/swarmprom-caddy:latest
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+    docker tag stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-prometheus:latest;
+    docker push stefanprodan/swarmprom-prometheus:latest;
+    docker tag stefanprodan/swarmprom-node-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-node-exporter:latest;
+    docker push stefanprodan/swarmprom-node-exporter:latest;
+    docker tag stefanprodan/swarmprom-alertmanager:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-alertmanager:latest;
+    docker push stefanprodan/swarmprom-alertmanager:latest;
+    docker tag stefanprodan/swarmprom-dockerd-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-dockerd-exporter:latest;
+    docker push stefanprodan/swarmprom-dockerd-exporter:latest;
+    docker tag stefanprodan/swarmprom-caddy:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-caddy:latest;
+    docker push stefanprodan/swarmprom-caddy:latest;
+    fi
