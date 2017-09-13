@@ -113,10 +113,12 @@ services:
 
   scope-launcher:
     image: stefanprodan/scope-swarm-launcher
+    networks:
+      - net
     command: scope launch --service-token=$TOKEN
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       mode: global
-        restart_policy:
-          condition: none
+      restart_policy:
+        condition: none
