@@ -15,7 +15,6 @@ script:
   - cd .. && cd node-exporter && docker build -t stefanprodan/swarmprom-node-exporter:$TRAVIS_BUILD_NUMBER .
   - cd .. && cd alertmanager && docker build -t stefanprodan/swarmprom-alertmanager:$TRAVIS_BUILD_NUMBER .
   - cd .. && cd dockerd-exporter && docker build -t stefanprodan/swarmprom-dockerd-exporter:$TRAVIS_BUILD_NUMBER .
-  - cd .. && cd caddy && docker build -t stefanprodan/swarmprom-caddy:$TRAVIS_BUILD_NUMBER .
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
@@ -28,6 +27,4 @@ after_success:
     docker push stefanprodan/swarmprom-alertmanager:latest;
     docker tag stefanprodan/swarmprom-dockerd-exporter:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-dockerd-exporter:latest;
     docker push stefanprodan/swarmprom-dockerd-exporter:latest;
-    docker tag stefanprodan/swarmprom-caddy:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-caddy:latest;
-    docker push stefanprodan/swarmprom-caddy:latest;
     fi

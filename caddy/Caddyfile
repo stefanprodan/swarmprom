@@ -4,7 +4,10 @@
             transparent
         }
 
-    import common.conf
+    gzip
+    log stdout
+    errors stderr
+    tls off
 }
 
 :9093 {
@@ -13,7 +16,10 @@
             transparent
         }
 
-    import common.conf
+    gzip
+    log stdout
+    errors stderr
+    tls off
 }
 
 :3000 {
@@ -22,5 +28,8 @@
             websocket
         }
 
-    import common.conf
+    gzip
+    log stdout
+    errors stderr
+    tls off
 }

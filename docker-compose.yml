@@ -10,6 +10,10 @@ volumes:
     grafana: {}
     alertmanager: {}
 
+configs:
+  caddy_config:
+    file: ./caddy/Caddyfile
+
 services:
   dockerd-exporter:
     image: stefanprodan/swarmprom-dockerd-exporter
@@ -114,7 +118,7 @@ services:
           - node.role == manager
 
   caddy:
-    image: stefanprodan/swarmprom-caddy
+    image: stefanprodan/caddy
     ports:
       - "3000:3000"
       - "9090:9090"
@@ -124,6 +128,9 @@ services:
     environment:
       - ADMIN_USER=${ADMIN_USER:-admin}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    configs:
+      - source: caddy_config
+        target: /etc/caddy/Caddyfile
     deploy:
       mode: replicated
       replicas: 1
