@@ -33,3 +33,13 @@
     errors stderr
     tls off
 }
+
+:9525 {
+    proxy / 172.18.0.1:9323 {
+            transparent
+        }
+
+    log stdout
+    errors stderr
+    tls off
+}
