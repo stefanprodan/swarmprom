@@ -20,9 +20,9 @@ scrape_configs:
   - job_name: 'dockerd-exporter'
     dns_sd_configs:
     - names:
-      - 'tasks.caddy'
+      - 'tasks.dockerd-exporter'
       type: 'A'
-      port: 9525
+      port: 9323
 
   - job_name: 'cadvisor'
     dns_sd_configs:
