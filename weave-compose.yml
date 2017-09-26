@@ -65,11 +65,11 @@ services:
       - net
     environment:
       - NODE_ID={{.Node.ID}}
-      - NODE_NAME={{.Node.HOSTNAME}}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - /etc/hostname:/etc/nodename
     command:
       - '-collector.textfile.directory=/etc/node-exporter/'
       - '-collector.procfs=/host/proc'
