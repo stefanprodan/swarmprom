@@ -21,7 +21,7 @@ monitoring your infrastructure and applications.
 
 ### Install
 
-Clone this repository and run the monitoring stack:
+Clone this repository and run the monitoring stack (requires Docker 17.06 or later):
 
 ```bash
 $ git clone https://github.com/stefanprodan/swarmprom.git
@@ -41,7 +41,7 @@ Services:
 * grafana (visualize metrics) `http://<swarm-ip>:3000`
 * node-exporter (host metrics collector)
 * cadvisor (containers metrics collector)
-* dockerd-exporter (Docker daemon metrics collector)
+* dockerd-exporter (Docker daemon metrics collector, requires Docker experimental metrics-addr to be enabled)
 * alertmanager (alerts dispatcher) `http://<swarm-ip>:9093`
 * caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
 
