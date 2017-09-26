@@ -187,10 +187,12 @@ Configure dockerd-exporter as global service and replace 172.18.0.1 with your do
 
 ```yaml
   dockerd-exporter:
-    image: stefanprodan/swarmprom-dockerd-exporter
+    image: stefanprodan/caddy
     environment:
-      - IN=172.18.0.1:9323
-      - OUT=9323
+      - DOCKER_GWBRIDGE_IP=172.18.0.1
+    configs:
+      - source: dockerd_config
+        target: /etc/caddy/Caddyfile
     deploy:
       mode: global
 ```

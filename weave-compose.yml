@@ -9,14 +9,22 @@ volumes:
     prometheus: {}
     grafana: {}
 
+configs:
+  caddy_config:
+    file: ./caddy/Caddyfile
+  dockerd_config:
+    file: ./dockerd-exporter/Caddyfile
+
 services:
   dockerd-exporter:
-    image: stefanprodan/swarmprom-dockerd-exporter
+    image: stefanprodan/caddy
     networks:
       - net
     environment:
-      - IN=172.18.0.1:9323
-      - OUT=9323
+      - DOCKER_GWBRIDGE_IP=172.18.0.1
+    configs:
+      - source: dockerd_config
+        target: /etc/caddy/Caddyfile
     deploy:
       mode: global
 
@@ -71,6 +79,26 @@ services:
     deploy:
       mode: global
 
+  caddy:
+    image: stefanprodan/caddy
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+    networks:
+      - net
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    configs:
+      - source: caddy_config
+        target: /etc/caddy/Caddyfile
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
   prometheus:
     image: stefanprodan/swarmprom-prometheus
     networks:
@@ -87,23 +115,6 @@ services:
       - '-storage.local.retention=24h'
     volumes:
       - prometheus:/prometheus
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-
-  caddy:
-    image: stefanprodan/swarmprom-caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-    networks:
-      - net
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
     deploy:
       mode: replicated
       replicas: 1

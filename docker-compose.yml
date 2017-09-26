@@ -24,7 +24,7 @@ services:
     environment:
       - DOCKER_GWBRIDGE_IP=172.18.0.1
     configs:
-      - source: caddy_config
+      - source: dockerd_config
         target: /etc/caddy/Caddyfile
     deploy:
       mode: global
@@ -136,4 +136,8 @@ services:
       - source: caddy_config
         target: /etc/caddy/Caddyfile
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
