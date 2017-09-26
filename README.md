@@ -356,9 +356,9 @@ what you need to do is run swarmprom with your Weave service token:
 TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml weavemon
 ```
 
-This will deploy Prometheus with Weave Cortex as remote write. The local retention is set to 24h so even if your 
-internet connection drops you'll not lose data as Prometheus will retry pushing data to Weave Cloud when the 
-connection is up again.
+This will deploy Weave Scope and Prometheus with Weave Cortex as remote write. 
+The local retention is set to 24h so even if your internet connection drops you'll not lose data 
+as Prometheus will retry pushing data to Weave Cloud when the connection is up again.
 
 You can define alerts and notifications routes in Weave Cloud in the same way you would do with alert manager.
 
@@ -370,6 +370,11 @@ To use Grafana with Weave Cloud you have to configure the data source like this:
 * Access: proxy
 * Basic auth: use your service token as password, the user value is ignored
 
+With Weave Cloud Scope you can see your Docker hosts, containers and services in real-time. 
+You can view metrics, tags and metadata of the running processes, containers or hosts. 
+Scope offers remote access to the Swarm’s nods and containers making it easy to diagnose issues in real-time.
+
+![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/weave-scope.png)
 
 
 
