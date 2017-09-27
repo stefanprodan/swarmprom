@@ -208,13 +208,8 @@ compose file.
   prometheus:
     image: stefanprodan/swarmprom-prometheus
     command:
-      - '-config.file=/etc/prometheus/prometheus.yml'
-      - '-storage.local.path=/prometheus'
-      - '-web.console.libraries=/etc/prometheus/console_libraries'
-      - '-web.console.templates=/etc/prometheus/consoles'
       - '-storage.local.target-heap-size=1073741824'
       - '-storage.local.retention=24h'
-      - '-alertmanager.url=http://alertmanager:9093'
 ```
 
 ### Setup Grafana
@@ -234,6 +229,7 @@ Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the def
 
 ![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v1.png)
 
+URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-nodes`
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
 
@@ -250,6 +246,8 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 ***Docker Swarm Services Dashboard***
 
 ![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v1.png)
+
+URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-services`
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm stacks and services, can be filtered by node ID:
 
@@ -342,6 +340,23 @@ You can install the `stress` package with apt and test out the CPU alert, you sh
 
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/alertmanager-slack-v2.png)
 
+### Monitoring applications and backend services
+
+You can extend swarmprom with special-purpose exporters for services like MongoDB, PostgreSQL, Kafka, 
+Redis and also instrument your own applications using the Prometheus client libraries. 
+
+In order to scrape other services you need to attach those to the `mon_net` network so Prometheus 
+can reach them. Or you can attach the mon_prometheus service to the networks where your services are running.
+
+Once your services are reachable by Prometheus you can add the dns name and port of those services to the 
+Prometheus config using the `JOBS` environment variable:
+
+```yaml
+  prometheus:
+    image: stefanprodan/swarmprom-prometheus
+    environment:
+      - JOBS=mongo-exporter:9216 kafka-exporter:9216 redis-exporter:9216
+```
 
 ### Monitoring production systems
 
