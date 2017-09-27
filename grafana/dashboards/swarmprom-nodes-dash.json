@@ -4,7 +4,7 @@
       "list": []
     },
     "description": "Docker Swarm nodes metrics",
-    "editable": false,
+    "editable": true,
     "gnetId": null,
     "graphTooltip": 0,
     "hideControls": true,
@@ -1686,5 +1686,5 @@
     "title": "Docker Swarm Nodes",
     "version": 15
   },
-  "overwrite" : true
+  "overwrite" : false
 }
