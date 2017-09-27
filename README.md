@@ -223,16 +223,12 @@ Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password **
 You can change the credentials in the compose file or 
 by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables at stack deploy.
 
-From the Grafana menu, choose ***Data Sources*** and click on ***Add Data Source***. 
-Use the following values to add the Prometheus service as the default data source:
+Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the default data source:
 
 * Name: Prometheus
 * Type: Prometheus
 * Url: http://prometheus:9090
 * Access: proxy
-
-Now you can import the dashboard temples from the [grafana](https://github.com/stefanprodan/swarmprom/tree/master/grafana) directory. 
-From the Grafana menu, choose ***Dashboards*** and click on ***Import***.
 
 ***Docker Swarm Nodes Dashboard***
 
@@ -390,6 +386,3 @@ You can view metrics, tags and metadata of the running processes, containers or 
 Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
 
 ![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/weave-scope.png)
-
-
-
