@@ -1,6 +1,5 @@
 # swarmprom
 
-
 Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https://prometheus.io/), 
 [Grafana](http://grafana.org/), 
 [cAdvisor](https://github.com/google/cadvisor), 
@@ -14,14 +13,14 @@ The project is currently hosted by the Cloud Native Computing Foundation and has
 monitoring solution for Kubernetes and its commercial flavors like Tectonic or Open Shift. 
 The Docker team has plans to integrate Prometheus by exposing Docker engine and containers metrics. 
 This feature is under development, you can track its progress under "[metrics: prometheus integration road map](https://github.com/moby/moby/issues/27307)" 
-on the moby project. 
+on the Moby project. 
 
 If you are planning to use Docker Swarm in production, Prometheus could be the perfect candidate for 
 monitoring your infrastructure and applications. 
 
 ### Install
 
-Clone this repository and run the monitoring stack (requires Docker 17.06 or later):
+Clone this repository and run the monitoring stack (requires Docker **17.06** or later):
 
 ```bash
 $ git clone https://github.com/stefanprodan/swarmprom.git
@@ -202,6 +201,22 @@ because of `group_left` queries tend to become more complex.
 In the future I hope Swarm DNS will contain the SRV record for hostname and Docker engine 
 metrics will expose container metrics replacing cAdvisor all together. 
 
+I've set the Prometheus retention period to 24h and the heap size to 1GB, you can change these values in the 
+compose file.
+
+```yaml
+  prometheus:
+    image: stefanprodan/swarmprom-prometheus
+    command:
+      - '-config.file=/etc/prometheus/prometheus.yml'
+      - '-storage.local.path=/prometheus'
+      - '-web.console.libraries=/etc/prometheus/console_libraries'
+      - '-web.console.templates=/etc/prometheus/consoles'
+      - '-storage.local.target-heap-size=1073741824'
+      - '-storage.local.retention=24h'
+      - '-alertmanager.url=http://alertmanager:9093'
+```
+
 ### Setup Grafana
 
 Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password ***admin***. 
@@ -209,7 +224,7 @@ You can change the credentials in the compose file or
 by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables at stack deploy.
 
 From the Grafana menu, choose ***Data Sources*** and click on ***Add Data Source***. 
-Use the following values to add the Prometheus service as data source:
+Use the following values to add the Prometheus service as the default data source:
 
 * Name: Prometheus
 * Type: Prometheus
@@ -372,7 +387,7 @@ To use Grafana with Weave Cloud you have to configure the data source like this:
 
 With Weave Cloud Scope you can see your Docker hosts, containers and services in real-time. 
 You can view metrics, tags and metadata of the running processes, containers or hosts. 
-Scope offers remote access to the Swarm’s nods and containers making it easy to diagnose issues in real-time.
+Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
 
 ![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/weave-scope.png)
 
