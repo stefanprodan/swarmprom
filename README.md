@@ -232,7 +232,7 @@ Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the def
 
 ***Docker Swarm Nodes Dashboard***
 
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/swarmprom-nodes-dash-v1.png)
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v1.png)
 
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
@@ -249,7 +249,7 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 
 ***Docker Swarm Services Dashboard***
 
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/swarmprom-services-dash-v1.png)
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v1.png)
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm stacks and services, can be filtered by node ID:
 
@@ -340,7 +340,7 @@ username and channel via environment variables:
 
 You can install the `stress` package with apt and test out the CPU alert, you should receive something like this:
 
-![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/alertmanager-slack-v2.png)
+![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/alertmanager-slack-v2.png)
 
 
 ### Monitoring production systems
@@ -385,4 +385,4 @@ With Weave Cloud Scope you can see your Docker hosts, containers and services in
 You can view metrics, tags and metadata of the running processes, containers or hosts. 
 Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
 
-![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/weave-scope.png)
+![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope.png)
