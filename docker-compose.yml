@@ -44,7 +44,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana
+    image: stefanprodan/swarmprom-grafana
     networks:
       - net
     environment:
