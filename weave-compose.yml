@@ -43,12 +43,12 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana
+    image: stefanprodan/swarmprom-grafana
     networks:
       - net
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD={$ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana:/var/lib/grafana

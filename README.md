@@ -376,10 +376,13 @@ Having the alerting and monitoring system hosted on a different platform other t
 it's good practice that will allow your to react quickly and efficiently when major disaster strikes. 
 
 Swarmprom comes with built-in [Weave Cloud](https://www.weave.works/product/cloud/) integration, 
-what you need to do is run swarmprom with your Weave service token:
+what you need to do is run the weave-compose stack with your Weave service token:
 
 ```bash
-TOKEN=<WEAVE-TOKEN> docker stack deploy -c weave-compose.yml weavemon
+TOKEN=<WEAVE-TOKEN> \
+ADMIN_USER=admin \
+ADMIN_PASSWORD=admin \
+docker stack deploy -c weave-compose.yml mon
 ```
 
 This will deploy Weave Scope and Prometheus with Weave Cortex as remote write. 
@@ -388,7 +391,7 @@ as Prometheus will retry pushing data to Weave Cloud when the connection is up a
 
 You can define alerts and notifications routes in Weave Cloud in the same way you would do with alert manager.
 
-To use Grafana with Weave Cloud you have to configure the data source like this:
+To use Grafana with Weave Cloud you have to reconfigure the Prometheus data source like this:
 
 * Name: Prometheus
 * Type: Prometheus
