@@ -396,8 +396,9 @@ To use Grafana with Weave Cloud you have to configure the data source like this:
 * Access: proxy
 * Basic auth: use your service token as password, the user value is ignored
 
-With Weave Cloud Scope you can see your Docker hosts, containers and services in real-time. 
-You can view metrics, tags and metadata of the running processes, containers or hosts. 
+Weave Scope automatically generates a map of your application, enabling you to intuitively understand, 
+monitor, and control your microservices based application. 
+You can view metrics, tags and metadata of the running processes, containers and hosts. 
 Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
 
 ![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope.png)

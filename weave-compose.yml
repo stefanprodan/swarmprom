@@ -123,7 +123,7 @@ services:
           - node.role == manager
 
   scope-launcher:
-    image: stefanprodan/scope-swarm-launcher
+    image: weaveworks/scope-swarm-launcher
     networks:
       - net
     command: scope launch --service-token=$TOKEN
