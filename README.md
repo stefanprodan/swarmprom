@@ -405,3 +405,5 @@ You can view metrics, tags and metadata of the running processes, containers and
 Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
 
 ![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope.png)
+
+![Scope Hosts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope-hosts.png)
