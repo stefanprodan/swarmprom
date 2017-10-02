@@ -104,6 +104,16 @@ services:
         reservations:
           memory: 64M
 
+  unsee:
+    image: cloudflare/unsee:v0.8.0
+    networks:
+      - net
+    environment:
+      - "ALERTMANAGER_URIS=default:http://alertmanager:9093"
+    deploy:
+      mode: replicated
+      replicas: 1
+
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter
     networks:
@@ -166,6 +176,7 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9093:9093"
+      - "9094:9094"
     networks:
       - net
     environment:

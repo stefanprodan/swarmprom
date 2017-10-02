@@ -4,7 +4,8 @@ Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https:/
 [Grafana](http://grafana.org/), 
 [cAdvisor](https://github.com/google/cadvisor), 
 [Node Exporter](https://github.com/prometheus/node_exporter) 
-and [Alert Manager](https://github.com/prometheus/alertmanager).
+[Alert Manager](https://github.com/prometheus/alertmanager),
+and [Unsee](https://github.com/cloudflare/unsee).
 
 Since its inception at SoundCloud, Prometheus has been a rising star in the infrastructure monitoring space.
 With the 2.0 release coming up, I would say Prometheus is one of the best 
@@ -42,7 +43,8 @@ Services:
 * cadvisor (containers metrics collector)
 * dockerd-exporter (Docker daemon metrics collector, requires Docker experimental metrics-addr to be enabled)
 * alertmanager (alerts dispatcher) `http://<swarm-ip>:9093`
-* caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
+* unsee (alert manager dashboard) `http://<swarm-ip>:9094`
+* caddy (reverse proxy and basic auth provider for prometheus, alertmanager and unsee)
 
 ### Prometheus service discovery 
 
@@ -372,6 +374,10 @@ username and channel via environment variables:
 You can install the `stress` package with apt and test out the CPU alert, you should receive something like this:
 
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/alertmanager-slack-v2.png)
+
+Cloudflare has made a great dashboard for managing alerts, you can access unsee at `http://<swarm-ip>:9094`:
+
+![Unsee](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/unsee.png)
 
 ### Monitoring applications and backend services
 
