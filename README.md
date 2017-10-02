@@ -289,7 +289,7 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 
 ### Configure alerting 
 
-The Prometheus swarmprom image contains the following alert rules:
+The Prometheus swarmprom comes with the following alert rules:
 
 ***Swarm Node CPU Usage***
 
@@ -348,6 +348,13 @@ ALERT node_disk_fill_rate_6h
       description = "Swarm node {{ $labels.node_name }} disk is going to fill up in 6h.",
   }
 ```
+
+You can add alerts to 
+[swarm_node](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_node.rules) 
+and [swarm_task](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_task.rules) 
+files and rerun stack deploy to update them. Because these files are mounted inside the Prometheus 
+container at run time as [Docker configs](https://docs.docker.com/engine/swarm/configs/) 
+you don't have to bundle them with the image.
 
 The Alertmanager swarmprom image is configured with the Slack receiver. 
 In order to receive alerts on Slack you have to provide the Slack API url, 

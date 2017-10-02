@@ -15,6 +15,10 @@ configs:
     file: ./caddy/Caddyfile
   dockerd_config:
     file: ./dockerd-exporter/Caddyfile
+  node_rules:
+    file: ./prometheus/rules/swarm_node.rules
+  task_rules:
+    file: ./prometheus/rules/swarm_task.rules
 
 services:
   dockerd-exporter:
@@ -139,6 +143,11 @@ services:
       - '-alertmanager.url=http://alertmanager:9093'
     volumes:
       - prometheus:/prometheus
+    configs:
+      - source: node_rules
+        target: /etc/prometheus/swarm_node.rules
+      - source: task_rules
+        target: /etc/prometheus/swarm_task.rules
     deploy:
       mode: replicated
       replicas: 1
