@@ -201,6 +201,8 @@ because of `group_left` queries tend to become more complex.
 In the future I hope Swarm DNS will contain the SRV record for hostname and Docker engine 
 metrics will expose container metrics replacing cAdvisor all together. 
 
+### Setup Prometheus
+
 I've set the Prometheus retention period to 24h and the heap size to 1GB, you can change these values in the 
 compose file.
 
@@ -210,7 +212,18 @@ compose file.
     command:
       - '-storage.local.target-heap-size=1073741824'
       - '-storage.local.retention=24h'
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 1024M
 ```
+
+Set the heap size to a maximum of 50% of the total physical memory. 
+
+When using host volumes you should ensure that Prometheus doesn't get scheduled on different nodes. You can 
+pin the Prometheus service on a specific host with placement constraints.
 
 ### Setup Grafana
 
@@ -261,7 +274,7 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 * Docker engine container and network actions by node
 * Docker engine list (version, node id, OS, kernel, graph driver)
 
-## Configure alerting 
+### Configure alerting 
 
 The Prometheus swarmprom image contains the following alert rules:
 
@@ -346,7 +359,7 @@ You can extend swarmprom with special-purpose exporters for services like MongoD
 Redis and also instrument your own applications using the Prometheus client libraries. 
 
 In order to scrape other services you need to attach those to the `mon_net` network so Prometheus 
-can reach them. Or you can attach the mon_prometheus service to the networks where your services are running.
+can reach them. Or you can attach the `mon_prometheus` service to the networks where your services are running.
 
 Once your services are reachable by Prometheus you can add the dns name and port of those services to the 
 Prometheus config using the `JOBS` environment variable:
@@ -373,7 +386,7 @@ use a service like Weave Cloud Cortex to ship your metrics outside of your curre
 You can use Weave Cloud not only as a backup of your 
 metrics database but you can also define alerts and use it as a data source four your Grafana dashboards. 
 Having the alerting and monitoring system hosted on a different platform other than your production 
-it's good practice that will allow your to react quickly and efficiently when major disaster strikes. 
+it's good practice that will allow your to react quickly and efficiently when a major disaster strikes. 
 
 Swarmprom comes with built-in [Weave Cloud](https://www.weave.works/product/cloud/) integration, 
 what you need to do is run the weave-compose stack with your Weave service token:

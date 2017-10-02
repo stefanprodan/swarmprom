@@ -28,6 +28,11 @@ services:
         target: /etc/caddy/Caddyfile
     deploy:
       mode: global
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   cadvisor:
     image: google/cadvisor
@@ -42,6 +47,11 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     deploy:
       mode: global
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   grafana:
     image: stefanprodan/swarmprom-grafana
@@ -59,6 +69,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager
@@ -79,6 +94,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter
@@ -99,6 +119,11 @@ services:
       - '-collectors.enabled=textfile,conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,time,vmstat'
     deploy:
       mode: global
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   prometheus:
     image: stefanprodan/swarmprom-prometheus
@@ -120,6 +145,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 1024M
 
   caddy:
     image: stefanprodan/caddy
@@ -141,6 +171,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 5s
