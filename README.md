@@ -225,6 +225,19 @@ Set the heap size to a maximum of 50% of the total physical memory.
 When using host volumes you should ensure that Prometheus doesn't get scheduled on different nodes. You can 
 pin the Prometheus service on a specific host with placement constraints.
 
+```yaml
+  prometheus:
+    image: stefanprodan/swarmprom-prometheus
+    volumes:
+      - prometheus:/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.monitoring.role == prometheus
+```
+
 ### Setup Grafana
 
 Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password ***admin***. 
