@@ -1,8 +1,4 @@
-FROM prom/alertmanager:v0.8.0
-
-ENV SLACK_URL=none \
-    SLACK_CHANNEL=general \
-    SLACK_USER=alertmanager
+FROM prom/alertmanager:v0.9.1
 
 COPY conf /etc/alertmanager/
 
