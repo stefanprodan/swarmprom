@@ -80,9 +80,9 @@ services:
     networks:
       - net
     environment:
-      - SLACK_URL=${SLACK_URL}
-      - SLACK_CHANNEL=${SLACK_CHANNEL}
-      - SLACK_USER=${SLACK_USER}
+      - SLACK_URL=${SLACK_URL:-https://hooks.slack.com/services/TOKEN}
+      - SLACK_CHANNEL=${SLACK_CHANNEL:-general}
+      - SLACK_USER=${SLACK_USER:-alertmanager}
     command:
       - '-config.file=/etc/alertmanager/alertmanager.yml'
       - '-storage.path=/alertmanager'
