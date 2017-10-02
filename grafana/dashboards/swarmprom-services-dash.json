@@ -26,6 +26,7 @@
               "rgba(50, 172, 45, 0.97)"
             ],
             "datasource": null,
+            "decimals": 0,
             "format": "none",
             "gauge": {
               "maxValue": 100,
@@ -105,6 +106,7 @@
               "rgba(50, 172, 45, 0.97)"
             ],
             "datasource": null,
+            "decimals": 0,
             "format": "none",
             "gauge": {
               "maxValue": 100,
@@ -184,6 +186,7 @@
               "rgba(50, 172, 45, 0.97)"
             ],
             "datasource": null,
+            "decimals": 0,
             "format": "none",
             "gauge": {
               "maxValue": 100,
@@ -263,6 +266,7 @@
               "rgba(50, 172, 45, 0.97)"
             ],
             "datasource": null,
+            "decimals": 0,
             "format": "none",
             "gauge": {
               "maxValue": 100,
