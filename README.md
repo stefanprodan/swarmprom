@@ -96,6 +96,20 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 * Docker engine container and network actions by node
 * Docker engine list (version, node id, OS, kernel, graph driver)
 
+***Prometheus Stats Dashboard***
+
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-prometheus-dash.png)
+
+URL: `http://<swarm-ip>:3000//dashboard/db/prometheus`
+
+* Uptime, local storage memory chunks and series
+* CPU usage graph
+* Memory usage graph
+* Chunks to persist and persistence urgency graphs
+* Chunks ops and checkpoint duration graphs
+* Target scrapes, rule evaluation duration, samples ingested rate and scrape duration graphs
+
+
 ## Prometheus service discovery 
 
 In order to collect metrics from Swarm nodes you need to deploy the exporters on each server. 
