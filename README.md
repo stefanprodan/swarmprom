@@ -3,8 +3,8 @@
 Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https://prometheus.io/), 
 [Grafana](http://grafana.org/), 
 [cAdvisor](https://github.com/google/cadvisor), 
-[Node Exporter](https://github.com/prometheus/node_exporter) 
-[Alert Manager](https://github.com/prometheus/alertmanager),
+[Node Exporter](https://github.com/prometheus/node_exporter), 
+[Alert Manager](https://github.com/prometheus/alertmanager)
 and [Unsee](https://github.com/cloudflare/unsee).
 
 Since its inception at SoundCloud, Prometheus has been a rising star in the infrastructure monitoring space.
@@ -19,7 +19,7 @@ on the Moby project.
 If you are planning to use Docker Swarm in production, Prometheus could be the perfect candidate for 
 monitoring your infrastructure and applications. 
 
-### Install
+## Install
 
 Clone this repository and run the monitoring stack (requires Docker **17.06** or later):
 
@@ -46,7 +46,57 @@ Services:
 * unsee (alert manager dashboard) `http://<swarm-ip>:9094`
 * caddy (reverse proxy and basic auth provider for prometheus, alertmanager and unsee)
 
-### Prometheus service discovery 
+
+## Setup Grafana
+
+Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password ***admin***. 
+You can change the credentials in the compose file or 
+by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables at stack deploy.
+
+Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the default data source:
+
+* Name: Prometheus
+* Type: Prometheus
+* Url: http://prometheus:9090
+* Access: proxy
+
+***Docker Swarm Nodes Dashboard***
+
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v1.png)
+
+URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-nodes`
+
+This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
+
+* Cluster up-time, number of nodes, number of CPUs, CPU idle gauge
+* System load average graph, CPU usage graph by node
+* Total memory, available memory gouge, total disk space and available storage gouge
+* Memory usage graph by node (used and cached)
+* I/O usage graph (read and write Bps)
+* IOPS usage (read and write operation per second) and CPU IOWait
+* Running containers graph by Swarm service and node
+* Network usage graph (inbound Bps, outbound Bps)
+* Nodes list (instance, node ID, node name)
+
+***Docker Swarm Services Dashboard***
+
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v1.png)
+
+URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-services`
+
+This dashboard shows key metrics for monitoring the resource usage of your Swarm stacks and services, can be filtered by node ID:
+
+* Number of nodes, stacks, services and running container
+* Swarm tasks graph by service name
+* Health check graph (total health checks and failed checks)
+* CPU usage graph by service and by container (top 10)
+* Memory usage graph by service and by container (top 10)
+* Network usage graph by service (received and transmitted)
+* Cluster network traffic and IOPS graphs
+* Docker engine container and network actions by node
+* Docker engine list (version, node id, OS, kernel, graph driver)
+
+## Prometheus service discovery 
 
 In order to collect metrics from Swarm nodes you need to deploy the exporters on each server. 
 Using global services you don't have to manually deploy the exporters. When you scale up your 
@@ -203,7 +253,7 @@ because of `group_left` queries tend to become more complex.
 In the future I hope Swarm DNS will contain the SRV record for hostname and Docker engine 
 metrics will expose container metrics replacing cAdvisor all together. 
 
-### Setup Prometheus
+## Configure Prometheus
 
 I've set the Prometheus retention period to 24h and the heap size to 1GB, you can change these values in the 
 compose file.
@@ -240,56 +290,7 @@ pin the Prometheus service on a specific host with placement constraints.
           - node.labels.monitoring.role == prometheus
 ```
 
-### Setup Grafana
-
-Navigate to `http://<swarm-ip>:3000` and login with user ***admin*** password ***admin***. 
-You can change the credentials in the compose file or 
-by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables at stack deploy.
-
-Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the default data source:
-
-* Name: Prometheus
-* Type: Prometheus
-* Url: http://prometheus:9090
-* Access: proxy
-
-***Docker Swarm Nodes Dashboard***
-
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v1.png)
-
-URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-nodes`
-
-This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
-
-* Cluster up-time, number of nodes, number of CPUs, CPU idle gauge
-* System load average graph, CPU usage graph by node
-* Total memory, available memory gouge, total disk space and available storage gouge
-* Memory usage graph by node (used and cached)
-* I/O usage graph (read and write Bps)
-* IOPS usage (read and write operation per second) and CPU IOWait
-* Running containers graph by Swarm service and node
-* Network usage graph (inbound Bps, outbound Bps)
-* Nodes list (instance, node ID, node name)
-
-***Docker Swarm Services Dashboard***
-
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v1.png)
-
-URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-services`
-
-This dashboard shows key metrics for monitoring the resource usage of your Swarm stacks and services, can be filtered by node ID:
-
-* Number of nodes, stacks, services and running container
-* Swarm tasks graph by service name
-* Health check graph (total health checks and failed checks)
-* CPU usage graph by service and by container (top 10)
-* Memory usage graph by service and by container (top 10)
-* Network usage graph by service (received and transmitted)
-* Cluster network traffic and IOPS graphs
-* Docker engine container and network actions by node
-* Docker engine list (version, node id, OS, kernel, graph driver)
-
-### Configure alerting 
+## Configure alerting 
 
 The Prometheus swarmprom comes with the following alert rules:
 
@@ -375,11 +376,13 @@ You can install the `stress` package with apt and test out the CPU alert, you sh
 
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/alertmanager-slack-v2.png)
 
-Cloudflare has made a great dashboard for managing alerts, you can access unsee at `http://<swarm-ip>:9094`:
+Cloudflare has made a great dashboard for managing alerts. 
+Unsee can aggregate alerts from multiple Alertmanager instances, running either in HA mode or separate. 
+You can access unsee at `http://<swarm-ip>:9094` using the admin user/password set via compose up:
 
 ![Unsee](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/unsee.png)
 
-### Monitoring applications and backend services
+## Monitoring applications and backend services
 
 You can extend swarmprom with special-purpose exporters for services like MongoDB, PostgreSQL, Kafka, 
 Redis and also instrument your own applications using the Prometheus client libraries. 
@@ -397,7 +400,7 @@ Prometheus config using the `JOBS` environment variable:
       - JOBS=mongo-exporter:9216 kafka-exporter:9216 redis-exporter:9216
 ```
 
-### Monitoring production systems
+## Monitoring production systems
 
 The swarmprom project is meant as a starting point in developing your own monitoring solution. Before running this 
 in production you should consider building and publishing your own Prometheus, node exporter and alert manager 
