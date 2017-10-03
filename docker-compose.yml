@@ -37,11 +37,6 @@ services:
           memory: 128M
         reservations:
           memory: 64M
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://172.18.0.1:9323/metrics"]
-      interval: 15s
-      timeout: 1s
-      retries: 3
 
   cadvisor:
     image: google/cadvisor

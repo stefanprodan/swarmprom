@@ -21,7 +21,7 @@ monitoring your infrastructure and applications.
 
 ## Install
 
-Clone this repository and run the monitoring stack (requires Docker **17.06** or later):
+Clone this repository and run the monitoring stack (requires Docker **17.09** or later):
 
 ```bash
 $ git clone https://github.com/stefanprodan/swarmprom.git
@@ -213,7 +213,7 @@ sum(engine_daemon_health_checks_failed_total) * on(instance) group_left(node_id)
 ```
 
 For now the engine metrics are still experimental. If you want to use dockerd-exporter you have to enable 
-the experimental feature and set the metrics address to `0.0.0.0`.
+the experimental feature and set the metrics address to `0.0.0.0:9323`.
 
 If you are running Docker with systemd create or edit
 /etc/systemd/system/docker.service.d/docker.conf file like so:
@@ -242,11 +242,6 @@ Replace 172.18.0.1 with your docker_gwbridge address in the compose file:
     image: stefanprodan/caddy
     environment:
       - DOCKER_GWBRIDGE_IP=172.18.0.1
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://172.18.0.1:9323/metrics"]
-      interval: 15s
-      timeout: 1s
-      retries: 3
 ```
 
 Collecting Docker Swarm metrics with Prometheus is not a smooth process, and 
