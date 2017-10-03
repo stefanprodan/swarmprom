@@ -228,24 +228,25 @@ ExecStart=/usr/bin/dockerd -H fd:// \
   --metrics-addr 0.0.0.0:9323
 ```
 
-Check if the docker_gwbridge ip address is 172.18.0.1:
+Apply the config changes with `systemctl daemon-reload && systemctl restart docker` and 
+check if the docker_gwbridge ip address is 172.18.0.1:
 
 ```bash
 ip -o addr show docker_gwbridge
 ```
 
-Configure dockerd-exporter as global service and replace 172.18.0.1 with your docker_gwbridge address:
+Replace 172.18.0.1 with your docker_gwbridge address in the compose file:
 
 ```yaml
   dockerd-exporter:
     image: stefanprodan/caddy
     environment:
       - DOCKER_GWBRIDGE_IP=172.18.0.1
-    configs:
-      - source: dockerd_config
-        target: /etc/caddy/Caddyfile
-    deploy:
-      mode: global
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://172.18.0.1:9323/metrics"]
+      interval: 15s
+      timeout: 1s
+      retries: 3
 ```
 
 Collecting Docker Swarm metrics with Prometheus is not a smooth process, and 
