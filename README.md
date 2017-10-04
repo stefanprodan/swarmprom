@@ -60,11 +60,13 @@ Swarmprom Grafana is preconfigured with two dashboards and Prometheus as the def
 * Url: http://prometheus:9090
 * Access: proxy
 
+After you login, click on the home drop down, in the left upper corner and you'll see the dashboards there.
+
 ***Docker Swarm Nodes Dashboard***
 
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v1.png)
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-nodes-dash-v3.png)
 
-URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-nodes`
+URL: `http://<swarm-ip>:3000/dashboard/db/docker-swarm-nodes`
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm nodes and can be filtered by node ID:
 
@@ -80,9 +82,9 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 
 ***Docker Swarm Services Dashboard***
 
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v1.png)
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-services-dash-v3.png)
 
-URL: `http://<swarm-ip>:3000//dashboard/db/docker-swarm-services`
+URL: `http://<swarm-ip>:3000/dashboard/db/docker-swarm-services`
 
 This dashboard shows key metrics for monitoring the resource usage of your Swarm stacks and services, can be filtered by node ID:
 
@@ -98,9 +100,9 @@ This dashboard shows key metrics for monitoring the resource usage of your Swarm
 
 ***Prometheus Stats Dashboard***
 
-![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-prometheus-dash.png)
+![Nodes](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/swarmprom-prometheus-dash-v3.png)
 
-URL: `http://<swarm-ip>:3000//dashboard/db/prometheus`
+URL: `http://<swarm-ip>:3000/dashboard/db/prometheus`
 
 * Uptime, local storage memory chunks and series
 * CPU usage graph
