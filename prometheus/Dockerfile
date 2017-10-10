@@ -1,4 +1,4 @@
-FROM prom/prometheus:v1.7.2
+FROM prom/prometheus:v1.8.0
 
 ENV WEAVE_TOKEN=none
 
