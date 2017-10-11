@@ -11,6 +11,10 @@ global:
     monitor: 'promswarm'
 
 scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
   - job_name: 'dockerd-exporter'
     dns_sd_configs:
     - names:
