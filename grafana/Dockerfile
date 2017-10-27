@@ -1,4 +1,4 @@
-FROM grafana/grafana:latest
+FROM grafana/grafana:4.6.0
 
 COPY docker-entrypoint.sh /etc/grafana/docker-entrypoint.sh
 COPY datasources /etc/grafana/datasources/
