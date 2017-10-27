@@ -7,18 +7,6 @@ Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https:/
 [Alert Manager](https://github.com/prometheus/alertmanager)
 and [Unsee](https://github.com/cloudflare/unsee).
 
-Since its inception at SoundCloud, Prometheus has been a rising star in the infrastructure monitoring space.
-With the 2.0 release coming up, I would say Prometheus is one of the best 
-open source monitoring system and time-series databases out there.
-The project is currently hosted by the Cloud Native Computing Foundation and has become the default 
-monitoring solution for Kubernetes and its commercial flavors like Tectonic or Open Shift. 
-The Docker team has plans to integrate Prometheus by exposing Docker engine and containers metrics. 
-This feature is under development, you can track its progress under "[metrics: prometheus integration road map](https://github.com/moby/moby/issues/27307)" 
-on the Moby project. 
-
-If you are planning to use Docker Swarm in production, Prometheus could be the perfect candidate for 
-monitoring your infrastructure and applications. 
-
 ## Install
 
 Clone this repository and run the monitoring stack:
