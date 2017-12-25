@@ -17,7 +17,9 @@ script:
   - cd .. && cd grafana && docker build -t stefanprodan/swarmprom-grafana:$TRAVIS_BUILD_NUMBER .
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ -z "DOCKER_USER" ]; then
+      echo "PR build, skipping Docker Hub push";
+    else
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
     docker tag stefanprodan/swarmprom-prometheus:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-prometheus:latest;
     docker push stefanprodan/swarmprom-prometheus:latest;
