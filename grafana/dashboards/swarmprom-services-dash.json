@@ -674,7 +674,7 @@
             "tableColumn": "",
             "targets": [
               {
-                "expr": "sum(irate(node_cpu{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count_scalar(node_cpu{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
+                "expr": "sum(irate(node_cpu{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count(node_cpu{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
                 "format": "time_series",
                 "intervalFactor": 2,
                 "legendFormat": "",
