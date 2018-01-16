@@ -4,24 +4,6 @@
 
 REGISTRY='myregistry.local:5100'
 
-cd alertmanager
-NAME=$REGISTRY/swarmprom-alertmanager:0.13.0
-docker build -t $NAME .
-docker push $NAME
-cd ..
-
-cd grafana
-NAME=$REGISTRY/swarmprom-grafana:4.6.3
-docker build -t $NAME .
-docker push $NAME
-cd ..
-
-cd prometheus
-NAME=$REGISTRY/swarmprom-prometheus:2.0.0
-docker build -t $NAME .
-docker push $NAME
-cd ..
-
 cd node-exporter
 NAME=$REGISTRY/swarmprom-node-exporter:0.15.2
 docker build -t $NAME .

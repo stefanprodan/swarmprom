@@ -1,6 +1,8 @@
-FROM prom/node-exporter:v0.14.0
+FROM prom/node-exporter:v0.15.2
 
 ENV NODE_ID=none
+
+USER root
 
 COPY conf /etc/node-exporter/
 

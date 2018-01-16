@@ -118,6 +118,7 @@ services:
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter
+    #image: myregistry.local:5100/swarmprom-node-exporter:0.15.2
     networks:
       - net
     environment:
@@ -128,11 +129,12 @@ services:
       - /:/rootfs:ro
       - /etc/hostname:/etc/nodename
     command:
-      - '-collector.textfile.directory=/etc/node-exporter/'
-      - '-collector.procfs=/host/proc'
-      - '-collector.sysfs=/host/sys'
-      - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-      - '-collectors.enabled=textfile,conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,time,vmstat'
+      - '--path.sysfs=/host/sys'
+      - '--path.procfs=/host/proc'
+      - '--collector.textfile.directory=/etc/node-exporter/'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      # disable ipvs collector because it barfs the node-exporter logs full with errors on my centos 7 vm's
+      - '--no-collector.ipvs'
     deploy:
       mode: global
       resources:
