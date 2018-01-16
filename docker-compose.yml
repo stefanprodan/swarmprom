@@ -16,9 +16,9 @@ configs:
   dockerd_config:
     file: ./dockerd-exporter/Caddyfile
   node_rules:
-    file: ./prometheus/rules/swarm_node.rules
+    file: ./prometheus/rules/swarm_node.rules.yml
   task_rules:
-    file: ./prometheus/rules/swarm_task.rules
+    file: ./prometheus/rules/swarm_task.rules.yml
 
 services:
   dockerd-exporter:
@@ -58,7 +58,8 @@ services:
           memory: 64M
 
   grafana:
-    image: stefanprodan/swarmprom-grafana
+    #image: stefanprodan/swarmprom-grafana
+    image: myregistry.local:5100/swarmprom-grafana:4.6.3
     networks:
       - net
     environment:
@@ -80,7 +81,8 @@ services:
           memory: 64M
 
   alertmanager:
-    image: stefanprodan/swarmprom-alertmanager
+    #image: stefanprodan/swarmprom-alertmanager
+    image: myregistry.local:5100/swarmprom-alertmanager:0.13.0
     networks:
       - net
     environment:
@@ -88,8 +90,8 @@ services:
       - SLACK_CHANNEL=${SLACK_CHANNEL:-general}
       - SLACK_USER=${SLACK_USER:-alertmanager}
     command:
-      - '-config.file=/etc/alertmanager/alertmanager.yml'
-      - '-storage.path=/alertmanager'
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     volumes:
       - alertmanager:/alertmanager
     deploy:
@@ -140,24 +142,23 @@ services:
           memory: 64M
 
   prometheus:
-    image: stefanprodan/swarmprom-prometheus
+    #image: stefanprodan/swarmprom-prometheus
+    image: myregistry.local:5100/swarmprom-prometheus:2.0.0
     networks:
       - net
     command:
-      - '-config.file=/etc/prometheus/prometheus.yml'
-      - '-storage.local.path=/prometheus'
-      - '-web.console.libraries=/etc/prometheus/console_libraries'
-      - '-web.console.templates=/etc/prometheus/consoles'
-      - '-storage.local.target-heap-size=1073741824'
-      - '-storage.local.retention=24h'
-      - '-alertmanager.url=http://alertmanager:9093'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=24h'
     volumes:
       - prometheus:/prometheus
     configs:
       - source: node_rules
-        target: /etc/prometheus/swarm_node.rules
+        target: /etc/prometheus/swarm_node.rules.yml
       - source: task_rules
-        target: /etc/prometheus/swarm_task.rules
+        target: /etc/prometheus/swarm_task.rules.yml
     deploy:
       mode: replicated
       replicas: 1

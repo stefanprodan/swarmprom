@@ -1,0 +1,24 @@
+groups:
+- name: /1/store/projects/vagrant/docker-swarm-vagrant/apps/swarmprom/prometheus/rules/swarm_task.rules.yml
+  rules:
+  - alert: task_high_cpu_usage_50
+    expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~".+"}[1m]))
+      BY (container_label_com_docker_swarm_task_name, container_label_com_docker_swarm_node_id)
+      * 100 > 50
+    for: 1m
+    annotations:
+      description: '{{ $labels.container_label_com_docker_swarm_task_name }} on ''{{
+        $labels.container_label_com_docker_swarm_node_id }}'' CPU usage is at {{ humanize
+        $value}}%.'
+      summary: CPU alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name
+        }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'
+  - alert: task_high_memory_usage_1g
+    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"})
+      BY (container_label_com_docker_swarm_node_id) > 1e+09
+    for: 1m
+    annotations:
+      description: '{{ $labels.container_label_com_docker_swarm_task_name }} on ''{{
+        $labels.container_label_com_docker_swarm_node_id }}'' memory usage is {{ humanize
+        $value}}.'
+      summary: Memory alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name
+        }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'

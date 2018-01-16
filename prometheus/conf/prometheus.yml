@@ -6,8 +6,8 @@ global:
     monitor: 'promswarm'
 
 rule_files:
-  - "swarm_node.rules"
-  - "swarm_task.rules"
+  - "swarm_node.rules.yml"
+  - "swarm_task.rules.yml"
 
 scrape_configs:
   - job_name: 'prometheus'
@@ -34,3 +34,10 @@ scrape_configs:
       - 'tasks.node-exporter'
       type: 'A'
       port: 9100
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+

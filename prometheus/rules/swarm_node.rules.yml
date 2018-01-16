@@ -1,0 +1,44 @@
+groups:
+- name: /1/store/projects/vagrant/docker-swarm-vagrant/apps/swarmprom/prometheus/rules/swarm_node.rules.yml
+  rules:
+  - alert: node_cpu_usage
+    expr: 100 - (avg(irate(node_cpu{mode="idle"}[1m]) * ON(instance) GROUP_LEFT(node_name)
+      node_meta * 100) BY (node_name)) > 50
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      description: Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize
+        $value}}%.
+      summary: CPU alert for Swarm node '{{ $labels.node_name }}'
+  - alert: node_memory_usage
+    expr: sum(((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal)
+      * ON(instance) GROUP_LEFT(node_name) node_meta * 100) BY (node_name) > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      description: Swarm node {{ $labels.node_name }} memory usage is at {{ humanize
+        $value}}%.
+      summary: Memory alert for Swarm node '{{ $labels.node_name }}'
+  - alert: node_disk_usage
+    expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"})
+      * 100 / node_filesystem_size{mountpoint="/"}) * ON(instance) GROUP_LEFT(node_name)
+      node_meta > 85
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      description: Swarm node {{ $labels.node_name }} disk usage is at {{ humanize
+        $value}}%.
+      summary: Disk alert for Swarm node '{{ $labels.node_name }}'
+  - alert: node_disk_fill_rate_6h
+    expr: predict_linear(node_filesystem_free{mountpoint="/"}[1h], 6 * 3600) * ON(instance)
+      GROUP_LEFT(node_name) node_meta < 0
+    for: 1h
+    labels:
+      severity: critical
+    annotations:
+      description: Swarm node {{ $labels.node_name }} disk is going to fill up in
+        6h.
+      summary: Disk fill alert for Swarm node '{{ $labels.node_name }}'
