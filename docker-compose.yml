@@ -117,8 +117,8 @@ services:
       replicas: 1
 
   node-exporter:
-    image: stefanprodan/swarmprom-node-exporter
-    #image: myregistry.local:5100/swarmprom-node-exporter:0.15.2
+    #image: stefanprodan/swarmprom-node-exporter
+    image: myregistry.local:5100/swarmprom-node-exporter:0.15.2
     networks:
       - net
     environment:
