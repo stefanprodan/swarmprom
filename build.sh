@@ -28,6 +28,12 @@ docker build -t $NAME .
 docker push $NAME
 cd ..
 
+cd alertmanager
+NAME=$REGISTRY/swarmprom-alertmanager:0.13.0
+docker build -t $NAME .
+docker push $NAME
+cd ..
+
 # Verify that images are all there
 curl -kL https://$REGISTRY/v2/_catalog
 

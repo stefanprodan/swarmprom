@@ -133,6 +133,8 @@ services:
       - '--path.procfs=/host/proc'
       - '--collector.textfile.directory=/etc/node-exporter/'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      # no collectors are explicitely enabled here, because the defaults are just fine,
+      # see https://github.com/prometheus/node_exporter
       # disable ipvs collector because it barfs the node-exporter logs full with errors on my centos 7 vm's
       - '--no-collector.ipvs'
     deploy:
