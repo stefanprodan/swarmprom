@@ -43,7 +43,7 @@ services:
       mode: global
 
   grafana:
-    image: stefanprodan/swarmprom-grafana
+    image: stefanprodan/swarmprom-grafana:4.6.0
     networks:
       - net
     environment:
@@ -67,7 +67,7 @@ services:
           - node.role == manager
 
   node-exporter:
-    image: stefanprodan/swarmprom-node-exporter
+    image: stefanprodan/swarmprom-node-exporter:v0.14.0
     networks:
       - net
     environment:
@@ -107,7 +107,7 @@ services:
           - node.role == manager
 
   prometheus:
-    image: stefanprodan/swarmprom-prometheus
+    image: stefanprodan/swarmprom-prometheus:v1.8.2
     networks:
       - net
     environment:
