@@ -3,7 +3,7 @@
 # Script to configure grafana datasources and dashboards.
 # https://github.com/grafana/grafana-docker/issues/74
 
-GRAFANA_URL=http://${GF_SECURITY_ADMIN_USER}:${GF_SECURITY_ADMIN_PASSWORD}@localhost:3000
+GRAFANA_URL=http://${GF_SECURITY_ADMIN_USER}:${GF_SECURITY_ADMIN_PASSWORD}@${GF_SERVER_HTTP_ADDR:-localhost}:${GF_SERVER_HTTP_PORT:-3000}
 DATASOURCES_PATH=${DATASOURCES_PATH:-/etc/grafana/datasources}
 DASHBOARDS_PATH=${DASHBOARDS_PATH:-/etc/grafana/dashboards}
 
