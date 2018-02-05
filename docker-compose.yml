@@ -58,14 +58,20 @@ services:
           memory: 64M
 
   grafana:
-    #image: stefanprodan/swarmprom-grafana
-    image: myregistry.local:5100/swarmprom-grafana:4.6.3
+    image: stefanprodan/swarmprom-grafana:4.6.3
     networks:
       - net
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
+      #- GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-localhost}
+      #- GF_SMTP_ENABLED=${GF_SMTP_ENABLED:-false}
+      #- GF_SMTP_FROM_ADDRESS=${GF_SMTP_FROM_ADDRESS:-grafana@test.com}
+      #- GF_SMTP_FROM_NAME=${GF_SMTP_FROM_NAME:-Grafana}
+      #- GF_SMTP_HOST=${GF_SMTP_HOST:-smtp:25}
+      #- GF_SMTP_USER=${GF_SMTP_USER}
+      #- GF_SMTP_PASSWORD=${GF_SMTP_PASSWORD}
     volumes:
       - grafana:/var/lib/grafana
     deploy:
@@ -81,8 +87,7 @@ services:
           memory: 64M
 
   alertmanager:
-    #image: stefanprodan/swarmprom-alertmanager
-    image: myregistry.local:5100/swarmprom-alertmanager:0.13.0
+    image: stefanprodan/swarmprom-alertmanager:v0.13.0
     networks:
       - net
     environment:
@@ -117,8 +122,7 @@ services:
       replicas: 1
 
   node-exporter:
-    #image: stefanprodan/swarmprom-node-exporter
-    image: myregistry.local:5100/swarmprom-node-exporter:0.15.2
+    image: stefanprodan/swarmprom-node-exporter:v0.15.2
     networks:
       - net
     environment:
@@ -146,8 +150,7 @@ services:
           memory: 64M
 
   prometheus:
-    #image: stefanprodan/swarmprom-prometheus
-    image: myregistry.local:5100/swarmprom-prometheus:2.0.0
+    image: stefanprodan/swarmprom-prometheus:v2.1.0
     networks:
       - net
     command:

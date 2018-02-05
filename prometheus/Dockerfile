@@ -1,6 +1,5 @@
-FROM prom/prometheus:v2.0.0
+FROM prom/prometheus:v2.1.0
 # https://hub.docker.com/r/prom/prometheus/tags/
-# docker build -t myregistry.local:5100/swarmprom-prometheus:2.0.0 .
 
 ENV WEAVE_TOKEN=none
 

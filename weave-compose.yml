@@ -43,13 +43,20 @@ services:
       mode: global
 
   grafana:
-    image: stefanprodan/swarmprom-grafana
+    image: stefanprodan/swarmprom-grafana:4.6.3
     networks:
       - net
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
+      #- GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-localhost}
+      #- GF_SMTP_ENABLED=${GF_SMTP_ENABLED:-false}
+      #- GF_SMTP_FROM_ADDRESS=${GF_SMTP_FROM_ADDRESS:-grafana@test.com}
+      #- GF_SMTP_FROM_NAME=${GF_SMTP_FROM_NAME:-Grafana}
+      #- GF_SMTP_HOST=${GF_SMTP_HOST:-smtp:25}
+      #- GF_SMTP_USER=${GF_SMTP_USER}
+      #- GF_SMTP_PASSWORD=${GF_SMTP_PASSWORD}
     volumes:
       - grafana:/var/lib/grafana
     deploy:
@@ -60,7 +67,7 @@ services:
           - node.role == manager
 
   node-exporter:
-    image: stefanprodan/swarmprom-node-exporter
+    image: stefanprodan/swarmprom-node-exporter:v0.15.2
     networks:
       - net
     environment:
@@ -71,11 +78,14 @@ services:
       - /:/rootfs:ro
       - /etc/hostname:/etc/nodename
     command:
-      - '-collector.textfile.directory=/etc/node-exporter/'
-      - '-collector.procfs=/host/proc'
-      - '-collector.sysfs=/host/sys'
-      - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-      - '-collectors.enabled=textfile,conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,time,vmstat'
+      - '--path.sysfs=/host/sys'
+      - '--path.procfs=/host/proc'
+      - '--collector.textfile.directory=/etc/node-exporter/'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      # no collectors are explicitely enabled here, because the defaults are just fine,
+      # see https://github.com/prometheus/node_exporter
+      # disable ipvs collector because it barfs the node-exporter logs full with errors on my centos 7 vm's
+      - '--no-collector.ipvs'
     deploy:
       mode: global
 
@@ -100,19 +110,18 @@ services:
           - node.role == manager
 
   prometheus:
-    image: stefanprodan/swarmprom-prometheus
+    image: stefanprodan/swarmprom-prometheus:v2.1.0
     networks:
       - net
     environment:
       - WEAVE_TOKEN=$TOKEN
       #- JOBS=mongo-exporter:9216
     command:
-      - '-config.file=/etc/prometheus/weave-cortex.yml'
-      - '-storage.local.path=/prometheus'
-      - '-web.console.libraries=/etc/prometheus/console_libraries'
-      - '-web.console.templates=/etc/prometheus/consoles'
-      - '-storage.local.target-heap-size=1073741824'
-      - '-storage.local.retention=24h'
+      - '--config.file=/etc/prometheus/weave-cortex.yml'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=24h'
     volumes:
       - prometheus:/prometheus
     deploy:
