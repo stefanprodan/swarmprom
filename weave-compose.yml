@@ -110,7 +110,7 @@ services:
           - node.role == manager
 
   prometheus:
-    image: stefanprodan/swarmprom-prometheus:v2.1.0
+    image: stefanprodan/swarmprom-prometheus:v2.2.0-rc.0
     networks:
       - net
     environment:
