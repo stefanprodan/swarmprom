@@ -457,23 +457,3 @@ Scope offers remote access to the Swarm’s nods and containers, making it easy 
 ![Scope Hosts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope-hosts-v2.png)
 
 
-## Enable emails on Grafana:
-
-To get SMTP credentials you can use [SendGrid](https://sendgrid.com/) service with free 40K emails per month.
-
-Export the next env vars:
-
-```bash
-
-export GF_SMTP_ENABLED=true
-export GF_SMTP_FROM_ADDRESS=grafana@test.com  # change to you preference
-export GF_SMTP_FROM_NAME=Grafana
-export GF_SMTP_HOST=smtp:25  # change, based on your SMTP provider
-export GF_SMTP_USER=***  # change, based on your SMTP provider
-export GF_SMTP_PASSWORD=***  # change, based on your SMTP provider
-
-```
-You can test emails by:
- - invite users, visit: localhost:`/org/users?gettingstarted`
- - send test notification: localhost:`/alerting/notification/new`
- 
