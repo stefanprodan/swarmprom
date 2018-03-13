@@ -176,7 +176,7 @@ services:
         limits:
           memory: 2048M
         reservations:
-          memory: 1024M
+          memory: 128M
 
   caddy:
     image: stefanprodan/caddy
