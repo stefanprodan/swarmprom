@@ -27,6 +27,6 @@ after_success:
     docker push stefanprodan/swarmprom-node-exporter:v0.15.2;
     docker tag stefanprodan/swarmprom-alertmanager:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-alertmanager:v0.14.0;
     docker push stefanprodan/swarmprom-alertmanager:v0.14.0;
-    docker tag stefanprodan/swarmprom-grafana:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-grafana:4.6.3;
-    docker push stefanprodan/swarmprom-grafana:4.6.3;
+    docker tag stefanprodan/swarmprom-grafana:$TRAVIS_BUILD_NUMBER stefanprodan/swarmprom-grafana:5.0.1;
+    docker push stefanprodan/swarmprom-grafana:5.0.1;
     fi
