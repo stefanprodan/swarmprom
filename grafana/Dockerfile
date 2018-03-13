@@ -1,11 +1,10 @@
-FROM grafana/grafana:4.6.3
+FROM grafana/grafana:5.0.1
 # https://hub.docker.com/r/grafana/grafana/tags/
 
-COPY docker-entrypoint.sh /etc/grafana/docker-entrypoint.sh
-COPY datasources /etc/grafana/datasources/
+COPY datasources /etc/grafana/provisioning/datasources/
+COPY swarmprom_dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY dashboards /etc/grafana/dashboards/
 
 ENV GF_SECURITY_ADMIN_PASSWORD=admin \
-    GF_SECURITY_ADMIN_USER=admin
-
-ENTRYPOINT ["/etc/grafana/docker-entrypoint.sh"]
+    GF_SECURITY_ADMIN_USER=admin \
+    GF_PATHS_PROVISIONING=/etc/grafana/provisioning/
