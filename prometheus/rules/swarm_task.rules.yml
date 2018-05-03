@@ -14,7 +14,7 @@ groups:
         }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'
   - alert: task_high_memory_usage_1g
     expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"})
-      BY (container_label_com_docker_swarm_node_id) > 1e+09
+      BY (container_label_com_docker_swarm_task_name, container_label_com_docker_swarm_node_id) > 1e+09
     for: 1m
     annotations:
       description: '{{ $labels.container_label_com_docker_swarm_task_name }} on ''{{
