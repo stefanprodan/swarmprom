@@ -22,7 +22,7 @@ configs:
 
 services:
   dockerd-exporter:
-    image: stefanprodan/caddy
+    image: repo.swarm.asha.fdi/caddy
     networks:
       - net
     environment:
@@ -39,7 +39,7 @@ services:
           memory: 64M
 
   cadvisor:
-    image: google/cadvisor
+    image: repo.swarm.asha.fdi/cadvisor
     networks:
       - net
     command: -logtostderr -docker_only
@@ -58,7 +58,7 @@ services:
           memory: 64M
 
   grafana:
-    image: stefanprodan/swarmprom-grafana:5.0.1
+    image: repo.swarm.asha.fdi/swarmprom-grafana:5.0.1
     networks:
       - net
     environment:
@@ -87,7 +87,7 @@ services:
           memory: 64M
 
   alertmanager:
-    image: stefanprodan/swarmprom-alertmanager:v0.14.0
+    image: repo.swarm.asha.fdi/swarmprom-alertmanager:v0.14.0
     networks:
       - net
     environment:
@@ -112,7 +112,7 @@ services:
           memory: 64M
 
   unsee:
-    image: cloudflare/unsee:v0.8.0
+    image: repo.swarm.asha.fdi/unsee:v0.8.0
     networks:
       - net
     environment:
@@ -122,7 +122,7 @@ services:
       replicas: 1
 
   node-exporter:
-    image: stefanprodan/swarmprom-node-exporter:v0.15.2
+    image: repo.swarm.asha.fdi/swarmprom-node-exporter:v0.15.2
     networks:
       - net
     environment:
@@ -150,7 +150,7 @@ services:
           memory: 64M
 
   prometheus:
-    image: stefanprodan/swarmprom-prometheus:v2.2.0-rc.0
+    image: repo.swarm.asha.fdi/swarmprom-prometheus:v2.2.0-rc.0
     networks:
       - net
     command:
@@ -179,7 +179,7 @@ services:
           memory: 128M
 
   caddy:
-    image: stefanprodan/caddy
+    image: repo.swarm.asha.fdi/caddy
     ports:
       - "3000:3000"
       - "9090:9090"
