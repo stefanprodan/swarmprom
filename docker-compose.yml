@@ -22,7 +22,7 @@ configs:
 
 services:
   dockerd-exporter:
-    image: stefanprodan/caddy
+    image: stefanprodan/dockerd-exporter
     networks:
       - net
     environment:
