@@ -83,7 +83,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "topk(1, sum((node_time - node_boot_time) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name))",
+          "expr": "topk(1, sum((node_time_seconds - node_boot_time_seconds) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -252,7 +252,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(node_cpu{mode=\"idle\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "count(node_cpu_seconds_total{mode=\"idle\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -338,7 +338,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(irate(node_cpu{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count(node_cpu{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
+          "expr": "sum(irate(node_cpu_seconds_total{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count(node_cpu_seconds_total{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -489,7 +489,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "100 - (avg(irate(node_cpu{mode=\"idle\"}[$interval])  * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) by (node_name))",
+          "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[$interval])  * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) by (node_name))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{node_name}}",
@@ -596,7 +596,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(node_memory_MemTotal * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum(node_memory_MemTotal_bytes * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -680,7 +680,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum((node_memory_MemAvailable / node_memory_MemTotal) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -764,7 +764,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(node_filesystem_size{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -848,7 +848,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum((node_filesystem_free{mountpoint=\"/\"} / node_filesystem_size{mountpoint=\"/\"}) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum((node_filesystem_free_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -908,7 +908,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum((node_memory_MemTotal - node_memory_MemFree - node_memory_Cached - node_memory_Buffers - node_memory_Slab) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
+          "expr": "sum((node_memory_MemTotal_bytes - node_memory_MemFree_bytes - node_memory_Cached_bytes - node_memory_Buffers_bytes - node_memory_Slab_bytes) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Used {{node_name}}",
@@ -1000,7 +1000,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(node_disk_bytes_read[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
+          "expr": "sum(irate(node_disk_read_bytes_total[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Read {{node_name}}",
@@ -1008,7 +1008,7 @@
           "step": 2
         },
         {
-          "expr": "sum(irate(node_disk_bytes_written[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
+          "expr": "sum(irate(node_disk_written_bytes_total[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Written {{node_name}}",
@@ -1092,7 +1092,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(node_disk_reads_completed[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
+          "expr": "sum(irate(node_disk_reads_completed_total[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Reads {{node_name}}",
@@ -1100,7 +1100,7 @@
           "step": 2
         },
         {
-          "expr": "sum(irate(node_disk_writes_completed[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
+          "expr": "sum(irate(node_disk_writes_completed_total[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) by (node_name)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Writes {{node_name}}",
@@ -1186,7 +1186,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(avg(irate(node_cpu{mode=\"iowait\"}[$interval])  * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) by (node_name))",
+          "expr": "(avg(irate(node_cpu_seconds_total{mode=\"iowait\"}[$interval])  * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) by (node_name))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{node_name}}",

@@ -58,7 +58,7 @@ services:
           memory: 64M
 
   grafana:
-    image: stefanprodan/swarmprom-grafana:5.0.1
+    image: stefanprodan/swarmprom-grafana:5.1.0
     networks:
       - net
     environment:
@@ -122,7 +122,7 @@ services:
       replicas: 1
 
   node-exporter:
-    image: stefanprodan/swarmprom-node-exporter:v0.15.2
+    image: stefanprodan/swarmprom-node-exporter:v0.16.0
     networks:
       - net
     environment:
