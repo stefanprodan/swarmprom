@@ -169,6 +169,7 @@ services:
     image: cloudflare/unsee:v0.8.0
     networks:
       - net
+      - infra_traefik
     environment:
       - "ALERTMANAGER_URIS=default:http://alertmanager:9093"
     deploy:
@@ -176,7 +177,7 @@ services:
       replicas: 1
       labels:
         traefik.docker.network: infra_traefik
-        traefik.unsee.port: 9094
+        traefik.unsee.port: 8080
         #traefik.unsee.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
         traefik.unsee.frontend.rule: PathPrefixStrip:/unsee/
         # user: test, password: ThisTest3d
