@@ -1,14 +1,22 @@
-version: "3.3"
+version: "3.4"
 
 networks:
   net:
     driver: overlay
     attachable: true
+  infra_traefik:
+    external: true
+  elasticsearch_esnetwork:
+    external: true
+
 
 volumes:
-    prometheus: {}
-    grafana: {}
-    alertmanager: {}
+  prometheus: {}
+  grafana: {}
+  alertmanager: {}
+  fbsock:
+    name: prometheus.${STACKDOMAIN:-loc.alho.st}_fbsock
+
 
 configs:
   caddy_config:
@@ -19,8 +27,27 @@ configs:
     file: ./prometheus/rules/swarm_node.rules.yml
   task_rules:
     file: ./prometheus/rules/swarm_task.rules.yml
+  fbconfig:
+     file: ./fluent-bit.conf
+
 
 services:
+  fluentbit:
+    image: fluent/fluent-bit:latest
+    command: /fluent-bit/bin/fluent-bit -v -c /fluent-bit/etc/fluent-bit.conf
+    configs:
+      - source: fbconfig
+        target: /fluent-bit/etc/fluent-bit.conf
+      #- source: fbparsers
+      #  target: /fluent-bit/etc/parsers-test.conf
+    deploy:
+      mode: global
+    networks:
+      elasticsearch_esnetwork:
+    volumes:
+      - fbsock:/fbsock/
+      #- thredds_logs:/thredds-logs/
+
   dockerd-exporter:
     image: stefanprodan/dockerd-exporter
     networks:
@@ -61,10 +88,12 @@ services:
     image: stefanprodan/swarmprom-grafana:5.0.1
     networks:
       - net
+      - infra_traefik
     environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-test}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-ThisTest3d}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=https://admin.${STACKDOMAIN:-loc.alho.st}/grafana/
       #- GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-localhost}
       #- GF_SMTP_ENABLED=${GF_SMTP_ENABLED:-false}
       #- GF_SMTP_FROM_ADDRESS=${GF_SMTP_FROM_ADDRESS:-grafana@test.com}
@@ -85,11 +114,25 @@ services:
           memory: 128M
         reservations:
           memory: 64M
+      labels:
+        traefik.docker.network: infra_traefik
+        traefik.grafana.port: 3000
+        #traefik.grafana.frontend.rule: Host:graphana.${STACKDOMAIN:-loc.alho.st}
+        #traefik.grafana.frontend.rule: PathPrefixStrip:/grafana/
+        traefik.grafana.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/grafana/
+        # user: test, password: ThisTest3d
+        #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
+    logging:
+      driver: "fluentd"
+      options:
+        tag: infra.monitoring
+
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
     networks:
       - net
+      - infra_traefik
     environment:
       - SLACK_URL=${SLACK_URL:-https://hooks.slack.com/services/TOKEN}
       - SLACK_CHANNEL=${SLACK_CHANNEL:-general}
@@ -110,6 +153,17 @@ services:
           memory: 128M
         reservations:
           memory: 64M
+      labels:
+        traefik.docker.network: infra_traefik
+        traefik.alertmanager.port: 9093
+        #traefik.alertmanager.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
+        traefik.alertmanager.frontend.rule: PathPrefixStrip:/alertmanager/
+        # user: test, password: ThisTest3d
+        #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
+    logging:
+      driver: "fluentd"
+      options:
+        tag: infra.monitoring
 
   unsee:
     image: cloudflare/unsee:v0.8.0
@@ -120,11 +174,23 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      labels:
+        traefik.docker.network: infra_traefik
+        traefik.unsee.port: 9094
+        #traefik.unsee.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
+        traefik.unsee.frontend.rule: PathPrefixStrip:/unsee/
+        # user: test, password: ThisTest3d
+        #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
+    logging:
+      driver: "fluentd"
+      options:
+        tag: infra.monitoring
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.15.2
     networks:
       - net
+      - infra_traefik
     environment:
       - NODE_ID={{.Node.ID}}
     volumes:
@@ -178,34 +244,3 @@ services:
         reservations:
           memory: 128M
 
-  caddy:
-    image: stefanprodan/caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9093:9093"
-      - "9094:9094"
-    networks:
-      - net
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-    configs:
-      - source: caddy_config
-        target: /etc/caddy/Caddyfile
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 5s
-      timeout: 1s
-      retries: 5
