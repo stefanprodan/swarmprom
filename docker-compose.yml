@@ -157,7 +157,7 @@ services:
         traefik.docker.network: infra_traefik
         traefik.alertmanager.port: 9093
         #traefik.alertmanager.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
-        traefik.alertmanager.frontend.rule: PathPrefixStrip:/alertmanager/
+        traefik.alertmanager.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/alertmanager/
         # user: test, password: ThisTest3d
         #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
     logging:
@@ -179,7 +179,7 @@ services:
         traefik.docker.network: infra_traefik
         traefik.unsee.port: 8080
         #traefik.unsee.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
-        traefik.unsee.frontend.rule: PathPrefixStrip:/unsee/
+        traefik.unsee.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/unsee/
         # user: test, password: ThisTest3d
         #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
     logging:
