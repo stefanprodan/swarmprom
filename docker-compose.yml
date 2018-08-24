@@ -159,7 +159,7 @@ services:
         #traefik.alertmanager.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
         traefik.alertmanager.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/alertmanager/
         # user: test, password: ThisTest3d
-        #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
+        traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
     logging:
       driver: "fluentd"
       options:
@@ -178,10 +178,9 @@ services:
       labels:
         traefik.docker.network: infra_traefik
         traefik.unsee.port: 8080
-        #traefik.unsee.frontend.rule: Host:port.${STACKDOMAIN:-loc.alho.st}
         traefik.unsee.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/unsee/
         # user: test, password: ThisTest3d
-        #traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
+        traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
     logging:
       driver: "fluentd"
       options:
@@ -220,12 +219,15 @@ services:
     image: stefanprodan/swarmprom-prometheus:v2.2.0-rc.0
     networks:
       - net
+      - infra_traefik
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention=24h'
+    environment:
+      JOBS: traefik_server:8080
     volumes:
       - prometheus:/prometheus
     configs:
