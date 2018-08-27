@@ -19,8 +19,6 @@ volumes:
 
 
 configs:
-  caddy_config:
-    file: ./caddy/Caddyfile
   dockerd_config:
     file: ./dockerd-exporter/Caddyfile
   node_rules:
@@ -177,7 +175,7 @@ services:
       replicas: 1
       labels:
         traefik.docker.network: infra_traefik
-        traefik.unsee.port: 8080
+        traefik.unsee.port: 9094
         traefik.unsee.frontend.rule: Host:admin.${STACKDOMAIN:-loc.alho.st};PathPrefixStrip:/unsee/
         # user: test, password: ThisTest3d
         traefik.frontend.auth.basic: test:$$2y$$05$$eW9/S3Ay8LD0GrTZvQA/guIAhwVlZPHcEngteXmy0A1YSCN4V3Rpq
