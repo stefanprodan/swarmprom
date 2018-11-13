@@ -694,7 +694,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(irate(node_cpu{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count(node_cpu{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
+          "expr": "sum(irate(node_cpu_seconds_total{mode=\"idle\"}[$interval]) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) * 100 / count(node_cpu_seconds_total{mode=\"user\"} * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"}) ",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -959,7 +959,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum((node_memory_MemAvailable / node_memory_MemTotal) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -1479,7 +1479,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum((node_filesystem_free{mountpoint=\"/\"} / node_filesystem_size{mountpoint=\"/\"}) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
+          "expr": "sum((node_filesystem_free_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"} * 100) / count(node_meta * on(instance) group_left(node_name) node_meta{node_id=~\"$node_id\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
