@@ -11,33 +11,12 @@ volumes:
     alertmanager: {}
 
 configs:
-  caddy_config:
-    file: ./caddy/Caddyfile
-  dockerd_config:
-    file: ./dockerd-exporter/Caddyfile
   node_rules:
     file: ./prometheus/rules/swarm_node.rules.yml
   task_rules:
     file: ./prometheus/rules/swarm_task.rules.yml
 
 services:
-  dockerd-exporter:
-    image: stefanprodan/caddy
-    networks:
-      - net
-    environment:
-      - DOCKER_GWBRIDGE_IP=172.18.0.1
-    configs:
-      - source: dockerd_config
-        target: /etc/caddy/Caddyfile
-    deploy:
-      mode: global
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-
   cadvisor:
     image: google/cadvisor
     networks:
@@ -59,11 +38,13 @@ services:
 
   grafana:
     image: stefanprodan/swarmprom-grafana:5.3.4
+    ports:
+      - "3000:3000"
     networks:
       - net
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-f0rzar0ma}
       - GF_USERS_ALLOW_SIGN_UP=false
       #- GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-localhost}
       #- GF_SMTP_ENABLED=${GF_SMTP_ENABLED:-false}
@@ -76,10 +57,10 @@ services:
       - grafana:/var/lib/grafana
     deploy:
       mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
+      replicas: 3
+      #placement:
+      #  constraints:
+      #    - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 128M
@@ -88,6 +69,8 @@ services:
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
+    ports:
+      - "9093:9093"
     networks:
       - net
     environment:
@@ -101,25 +84,59 @@ services:
       - alertmanager:/alertmanager
     deploy:
       mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
+      replicas: 3
+      #placement:
+      #  constraints:
+      #    - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 128M
         reservations:
           memory: 64M
 
-  unsee:
-    image: cloudflare/unsee:v0.8.0
+  smtp:
+    image: namshi/smtp
+    ports:
+     - "25:25"
     networks:
       - net
     environment:
-      - "ALERTMANAGER_URIS=default:http://alertmanager:9093"
-    deploy:
+     #  # MUST start with : e.g RELAY_NETWORKS: :192.168.0.0/24:10.0.0.0/16
+     #  # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
+     #  RELAY_NETWORKS: :192.168.0.0/24
+     #  # what domains should be accepted to forward to lower distance MX server.
+     #  RELAY_DOMAINS: <domain1> : <domain2> : <domain3>
+     #  # To act as a Gmail relay
+     #  GMAIL_USER:
+     #  GMAIL_PASSWORD:
+     #  # For use with Amazon SES relay
+     #  SES_USER:
+     #  SES_PASSWORD:
+     #  SES_REGION:
+     #  # if provided will enable TLS support
+     #  KEY_PATH:
+     #  CERTIFICATE_PATH:
+     #  # the outgoing mail hostname
+        MAILNAME: alert.imolab.it
+     #  # set this to any value to disable ipv6
+     #  DISABLE_IPV6:
+     # # Generic SMTP Relay
+     # SMARTHOST_ADDRESS:
+     # SMARTHOST_PORT:
+     # SMARTHOST_USER:
+     # SMARTHOST_PASSWORD:
+     # SMARTHOST_ALIASES:
+     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
+      #placement:
+      #  constraints:
+      #    - node.role == manager #:TOREVIEW Necessary?
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.16.0
@@ -148,6 +165,8 @@ services:
 
   prometheus:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
+    ports:
+     - "9090:9090"
     networks:
       - net
     command:
@@ -163,44 +182,12 @@ services:
         target: /etc/prometheus/swarm_task.rules.yml
     deploy:
       mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
+      replicas: 3
+      #placement:
+      #  constraints:
+      #    - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 2048M
         reservations:
           memory: 128M
-
-  caddy:
-    image: stefanprodan/caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9093:9093"
-      - "9094:9094"
-    networks:
-      - net
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-    configs:
-      - source: caddy_config
-        target: /etc/caddy/Caddyfile
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 5s
-      timeout: 1s
-      retries: 5

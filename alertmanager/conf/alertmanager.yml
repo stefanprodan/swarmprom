@@ -1,11 +1,104 @@
+global:
+    # The smarthost and SMTP sender used for mail notifications.
+    smtp_smarthost: 'locasmtp_alertsmtplhost:25'
+    smtp_from: 'alert@smtp_alertsmtp.imolab.it'
+
+# The root route on which each incoming alert enters.
 route:
-    receiver: 'slack'
+    # The root route must not have any matchers as it is the entry point for
+    # all alerts. It needs to have a receiver configured so alerts that do not
+    # match any of the sub-routes are sent to someone.
+    receiver: 'team-monitoring'
+
+    # The labels by which incoming alerts are grouped together. For example,
+    # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+    # be batched into a single group.
+    group_by: ['alertname', 'cluster']
+
+    # When a new group of alerts is created by an incoming alert, wait at
+    # least 'group_wait' to send the initial notification.
+    # This way ensures that you get multiple alerts for the same group that start
+    # firing shortly after another are batched together on the first
+    # notification.
+    group_wait: 30s
+
+    # When the first notification was sent, wait 'group_interval' to send a batch
+    # of new alerts that started firing for that group.
+    group_interval: 5m
+
+    # If an alert has successfully been sent, wait 'repeat_interval' to
+    # resend them.
+    repeat_interval: 3h
+
+    # All the above attributes are inherited by all child routes and can
+    # overwritten on each.
+
+    # The child route trees.
+    routes:
+        # This routes performs a regular expression match on alert labels to
+        # catch alerts that are related to a list of services.
+        - match_re:
+              service: ^mon_.*$
+          receiver: team-monitoring
+
+          # The service has a sub-route for critical alerts, any alerts
+          # that do not match, i.e. severity != critical, fall-back to the
+          # parent node and are sent to 'team-monitoring'
+          routes:
+              - match:
+                    severity: critical
+                receiver: team-monitoring
+
+        - match:
+              service: smtp_alertsmtp
+          receiver: team-monitoring-2
+
+          routes:
+              - match:
+                    severity: critical
+                receiver: team-monitoring-2
+
+        # This route handles all alerts coming from a database service. If there's
+        # no team to handle it, it defaults to the DB team.
+        #- match:
+        #      service: database
+
+        #  receiver: team-DB-pager
+          # Also group alerts by affected database.
+        #  group_by: [alertname, cluster, database]
+
+        #  routes:
+        #      - match:
+        #            owner: team-X
+        #        receiver: team-monitoring
+
+        #      - match:
+        #            owner: team-Y
+        #        receiver: team-monitoring-2
+
+# Inhibition rules allow to mute a set of alerts given that another alert is
+# firing.
+# We use this to mute any warning-level notifications if the same alert is
+# already critical.
+inhibit_rules:
+    - source_match:
+          severity: 'critical'
+      target_match:
+          severity: 'warning'
+      # Apply inhibition if the alertname is the same.
+      equal: ['alertname']
 
 receivers:
-    - name: 'slack'
-      slack_configs:
-          - send_resolved: true
-            text: "{{ .CommonAnnotations.description }}"
-            #username: <user>#
-            #channel: <channel>#
-            #api_url: <url>#
+    - name: 'team-monitoring'
+      email_configs:
+          - to: 'alestam93@gmail.com, sabbio.a93@gmail.com'
+
+    #- name: 'team-X-pager'
+    #  email_configs:
+    #      - to: 'team-X+alerts-critical@example.org'
+    #  pagerduty_configs:
+    #      - service_key: <team-X-key>
+
+    - name: 'team-monitoring-2'
+      email_configs:
+          - to: 'alestam93@gmail.com, sabbio.a93@gmail.com'
