@@ -3,9 +3,8 @@
 Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https://prometheus.io/), 
 [Grafana](http://grafana.org/), 
 [cAdvisor](https://github.com/google/cadvisor), 
-[Node Exporter](https://github.com/prometheus/node_exporter), 
-[Alert Manager](https://github.com/prometheus/alertmanager)
-and [Unsee](https://github.com/cloudflare/unsee).
+[Node Exporter](https://github.com/prometheus/node_exporter)
+and [Alert Manager](https://github.com/prometheus/alertmanager)
 
 ## Install
 
@@ -17,9 +16,6 @@ $ cd swarmprom
 
 ADMIN_USER=admin \
 ADMIN_PASSWORD=admin \
-SLACK_URL=https://hooks.slack.com/services/TOKEN \
-SLACK_CHANNEL=devops-alerts \
-SLACK_USER=alertmanager \
 docker stack deploy -c docker-compose.yml mon
 ```
 
@@ -35,10 +31,7 @@ Services:
 * grafana (visualize metrics) `http://<swarm-ip>:3000`
 * node-exporter (host metrics collector)
 * cadvisor (containers metrics collector)
-* dockerd-exporter (Docker daemon metrics collector, requires Docker experimental metrics-addr to be enabled)
 * alertmanager (alerts dispatcher) `http://<swarm-ip>:9093`
-* unsee (alert manager dashboard) `http://<swarm-ip>:9094`
-* caddy (reverse proxy and basic auth provider for prometheus, alertmanager and unsee)
 
 
 ## Setup Grafana
@@ -382,12 +375,6 @@ You can install the `stress` package with apt and test out the CPU alert, you sh
 
 ![Alerts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/alertmanager-slack-v2.png)
 
-Cloudflare has made a great dashboard for managing alerts. 
-Unsee can aggregate alerts from multiple Alertmanager instances, running either in HA mode or separate. 
-You can access unsee at `http://<swarm-ip>:9094` using the admin user/password set via compose up:
-
-![Unsee](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/unsee.png)
-
 ## Monitoring applications and backend services
 
 You can extend swarmprom with special-purpose exporters for services like MongoDB, PostgreSQL, Kafka, 
@@ -422,38 +409,3 @@ You can use Weave Cloud not only as a backup of your
 metrics database but you can also define alerts and use it as a data source for your Grafana dashboards. 
 Having the alerting and monitoring system hosted on a different platform other than your production 
 is good practice that will allow you to react quickly and efficiently when a major disaster strikes. 
-
-Swarmprom comes with built-in [Weave Cloud](https://www.weave.works/product/cloud/) integration, 
-what you need to do is run the weave-compose stack with your Weave service token:
-
-```bash
-TOKEN=<WEAVE-TOKEN> \
-ADMIN_USER=admin \
-ADMIN_PASSWORD=admin \
-docker stack deploy -c weave-compose.yml mon
-```
-
-This will deploy Weave Scope and Prometheus with Weave Cortex as remote write. 
-The local retention is set to 24h so even if your internet connection drops you'll not lose data 
-as Prometheus will retry pushing data to Weave Cloud when the connection is up again.
-
-You can define alerts and notifications routes in Weave Cloud in the same way you would do with alert manager.
-
-To use Grafana with Weave Cloud you have to reconfigure the Prometheus data source like this:
-
-* Name: Prometheus
-* Type: Prometheus
-* Url: https://cloud.weave.works/api/prom
-* Access: proxy
-* Basic auth: use your service token as password, the user value is ignored
-
-Weave Scope automatically generates a map of your application, enabling you to intuitively understand, 
-monitor, and control your microservices based application. 
-You can view metrics, tags and metadata of the running processes, containers and hosts. 
-Scope offers remote access to the Swarm’s nods and containers, making it easy to diagnose issues in real-time.
-
-![Scope](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope.png)
-
-![Scope Hosts](https://raw.githubusercontent.com/stefanprodan/swarmprom/master/grafana/screens/weave-scope-hosts-v2.png)
-
-
