@@ -58,9 +58,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      #placement:
-      #  constraints:
-      #    - node.role == manager #:TOREVIEW Necessary?
+      placement:
+        constraints:
+          - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 128M
@@ -85,9 +85,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      #placement:
-      #  constraints:
-      #    - node.role == manager #:TOREVIEW Necessary?
+      placement:
+        constraints:
+          - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 128M
@@ -129,9 +129,9 @@ services:
      deploy:
       mode: replicated
       replicas: 3
-      #placement:
-      #  constraints:
-      #    - node.role == manager #:TOREVIEW Necessary?
+      placement:
+        constraints:
+          - node.role == manager #:TOREVIEW Necessary?
       resources:
         limits:
           memory: 128M
@@ -183,9 +183,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      #placement:
-      #  constraints:
-      #    - node.role == manager #:TOREVIEW Necessary?
+      placement:
+        constraints:
+          - node.role == manager
       resources:
         limits:
           memory: 2048M
