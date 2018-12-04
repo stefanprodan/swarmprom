@@ -117,7 +117,7 @@ services:
      #  KEY_PATH:
      #  CERTIFICATE_PATH:
      #  # the outgoing mail hostname
-        MAILNAME: alert.imolab.it
+      MAILNAME: alert.imolab.it
      #  # set this to any value to disable ipv6
      #  DISABLE_IPV6:
      # # Generic SMTP Relay
@@ -127,16 +127,16 @@ services:
      # SMARTHOST_PASSWORD:
      # SMARTHOST_ALIASES:
     deploy:
-    mode: replicated
-    replicas: 3
-    #placement:
-    #  constraints:
-    #    - node.role == manager
-    resources:
-      limits:
-        memory: 128M
-      reservations:
-        memory: 64M
+      mode: replicated
+      replicas: 3
+      #placement:
+      #  constraints:
+      #    - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.16.0
