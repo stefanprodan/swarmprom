@@ -20,12 +20,12 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'dockerd-exporter'
-    dns_sd_configs:
-    - names:
-      - 'tasks.dockerd-exporter'
-      type: 'A'
-      port: 9323
+  #- job_name: 'dockerd-exporter'
+  #  dns_sd_configs:
+  #  - names:
+  #    - 'tasks.dockerd-exporter'
+  #    type: 'A'
+  #    port: 9323
 
   - job_name: 'cadvisor'
     dns_sd_configs:

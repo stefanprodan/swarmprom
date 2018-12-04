@@ -58,9 +58,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      placement:
-        constraints:
-          - node.role == manager #:TOREVIEW Necessary?
+      #placement:
+      #  constraints:
+      #    - node.role == manager
       resources:
         limits:
           memory: 128M
@@ -85,9 +85,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      placement:
-        constraints:
-          - node.role == manager #:TOREVIEW Necessary?
+      #placement:
+      #  constraints:
+      #    - node.role == manager
       resources:
         limits:
           memory: 128M
@@ -126,17 +126,17 @@ services:
      # SMARTHOST_USER:
      # SMARTHOST_PASSWORD:
      # SMARTHOST_ALIASES:
-     deploy:
-      mode: replicated
-      replicas: 3
-      placement:
-        constraints:
-          - node.role == manager #:TOREVIEW Necessary?
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
+    deploy:
+    mode: replicated
+    replicas: 3
+    #placement:
+    #  constraints:
+    #    - node.role == manager
+    resources:
+      limits:
+        memory: 128M
+      reservations:
+        memory: 64M
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.16.0
@@ -183,9 +183,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      placement:
-        constraints:
-          - node.role == manager
+      #placement:
+      #  constraints:
+      #    - node.role == manager
       resources:
         limits:
           memory: 2048M
