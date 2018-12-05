@@ -68,8 +68,6 @@ services:
     image: stefanprodan/swarmprom-grafana:5.3.4
     #ports:
     #  - "3000:3000"
-    label:
-      - traefik.port=3000
     networks:
       - net
     environment:
@@ -87,6 +85,8 @@ services:
       - grafana:/var/lib/grafana
     deploy:
       mode: replicated
+      label:
+      - traefik.port=3000
       replicas: 3
       #placement:
       #  constraints:
@@ -101,8 +101,6 @@ services:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
     #ports:
     #  - "9093:9093"
-    label:
-      - traefik.port=9093
     networks:
       - net
     environment:
@@ -116,6 +114,8 @@ services:
       - alertmanager:/alertmanager
     deploy:
       mode: replicated
+      label:
+      - traefik.port=9093
       replicas: 3
       #placement:
       #  constraints:
@@ -199,8 +199,6 @@ services:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
     #ports:
     # - "9090:9090"
-    label:
-      - traefik.port=9093
     networks:
       - net
     command:
@@ -216,6 +214,8 @@ services:
         target: /etc/prometheus/swarm_task.rules.yml
     deploy:
       mode: replicated
+      label:
+      - traefik.port=9093
       replicas: 3
       #placement:
       #  constraints:
