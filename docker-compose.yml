@@ -17,6 +17,35 @@ configs:
     file: ./prometheus/rules/swarm_task.rules.yml
 
 services:
+  traefik:
+    image: traefik
+    networks:
+      - net
+    command: 
+      - "--api"
+      - "--docker"
+      - "--docker.swarmMode"
+      --docker.domain=traefik
+      --docker.watch
+    ports:
+      - "80:80"      
+      - "8080:8080"
+      - "9090:9090"
+      - "3000:3000"
+      - "9093:9093"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
   cadvisor:
     image: google/cadvisor
     networks:
