@@ -25,8 +25,8 @@ services:
       - "--api"
       - "--docker"
       - "--docker.swarmMode"
-      --docker.domain=traefik
-      --docker.watch
+      - --docker.domain=traefik
+      - --docker.watch
     ports:
       - "80:80"      
       - "8080:8080"
