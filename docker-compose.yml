@@ -27,9 +27,8 @@ services:
       - "--docker.swarmMode"
       - --docker.domain=traefik
       - --docker.watch
-    ports:
-      - "80:80"      
-      - "8080:8080"
+    ports:    
+      - "8082:8080"
       - "9090:9090"
       - "3000:3000"
       - "9093:9093"
@@ -67,8 +66,10 @@ services:
 
   grafana:
     image: stefanprodan/swarmprom-grafana:5.3.4
-    ports:
-      - "3000:3000"
+    #ports:
+    #  - "3000:3000"
+    label:
+      - traefik.port=3000
     networks:
       - net
     environment:
@@ -98,8 +99,10 @@ services:
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
-    ports:
-      - "9093:9093"
+    #ports:
+    #  - "9093:9093"
+    label:
+      - traefik.port=9093
     networks:
       - net
     environment:
@@ -194,8 +197,10 @@ services:
 
   prometheus:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
-    ports:
-     - "9090:9090"
+    #ports:
+    # - "9090:9090"
+    label:
+      - traefik.port=9093
     networks:
       - net
     command:
