@@ -24,9 +24,9 @@ services:
     command: --api --docker --docker.swarmMode --docker.domain=traefik --docker.watch --web --web.metrics.prometheus --web.metrics.prometheus.buckets="0.1,0.3,1.2,5.0"
     ports:    
       - "8081:8080"
-      - "9090:9090"
-      - "3000:3000"
-      - "9093:9093"
+      #- "9090:9090"
+      #- "3000:3000"
+      #- "9093:9093"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
@@ -61,8 +61,8 @@ services:
 
   grafana:
     image: stefanprodan/swarmprom-grafana:5.3.4
-    #ports:
-    #  - "3000:3000"
+    ports:
+      - "3000:3000"
     labels:
       - "traefik.backend=grafana"
       - "traefik.frontend.rule=Host:grafana.imolab.it"
@@ -99,8 +99,8 @@ services:
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
-    #ports:
-    #  - "9093:9093"
+    ports:
+      - "9093:9093"
     labels:
       - "traefik.backend=alertmanager"
       - "traefik.frontend.rule=Host:alertmanager.imolab.it"
@@ -202,8 +202,8 @@ services:
 
   prometheus:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
-    #ports:
-    # - "9090:9090"
+    ports:
+     - "9090:9090"
     labels:
       - "traefik.backend=prometheus"
       - "traefik.frontend.rule=Host:prometheus.imolab.it"
