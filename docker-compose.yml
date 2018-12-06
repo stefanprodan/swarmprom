@@ -25,10 +25,13 @@ services:
       - "--api"
       - "--docker"
       - "--docker.swarmMode"
-      - --docker.domain=traefik
-      - --docker.watch
+      - "--docker.domain=traefik"
+      - "--docker.watch"
+      - "--metrics"
+      - "--metrics.prometheus"
+      - "--metrics.prometheus.buckets=[0.1,0.3,1.2,5.0]"
     ports:    
-      - "8082:8080"
+      - "8081:8080"
       - "9090:9090"
       - "3000:3000"
       - "9093:9093"
@@ -68,6 +71,8 @@ services:
     image: stefanprodan/swarmprom-grafana:5.3.4
     #ports:
     #  - "3000:3000"
+    labels:
+      - traefik.port=3000
     networks:
       - net
     environment:
@@ -85,8 +90,6 @@ services:
       - grafana:/var/lib/grafana
     deploy:
       mode: replicated
-      label:
-      - traefik.port=3000
       replicas: 3
       #placement:
       #  constraints:
@@ -101,6 +104,8 @@ services:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
     #ports:
     #  - "9093:9093"
+    labels:
+      - traefik.port=9093
     networks:
       - net
     environment:
@@ -114,8 +119,6 @@ services:
       - alertmanager:/alertmanager
     deploy:
       mode: replicated
-      label:
-      - traefik.port=9093
       replicas: 3
       #placement:
       #  constraints:
@@ -199,6 +202,8 @@ services:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
     #ports:
     # - "9090:9090"
+    labels:
+      - traefik.port=9090
     networks:
       - net
     command:
@@ -214,8 +219,6 @@ services:
         target: /etc/prometheus/swarm_task.rules.yml
     deploy:
       mode: replicated
-      label:
-      - traefik.port=9093
       replicas: 3
       #placement:
       #  constraints:
