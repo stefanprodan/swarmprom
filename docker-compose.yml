@@ -27,9 +27,9 @@ services:
       - "--docker.swarmMode"
       - "--docker.domain=traefik"
       - "--docker.watch"
-      - "--metrics"
-      - "--metrics.prometheus"
-      - "--metrics.prometheus.buckets=[0.1,0.3,1.2,5.0]"
+      - "--web"
+      - "--web.metrics.prometheus"
+      - "--web.metrics.prometheus.buckets=[0.1,0.3,1.2,5.0]"
     ports:    
       - "8081:8080"
       - "9090:9090"
