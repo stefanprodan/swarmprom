@@ -7,7 +7,7 @@ datasources:
 - name: Prometheus
   type: prometheus
   access: direct
-  url: http://prometheus:9090
+  url: http://pippo.imolab.it:9090
   isDefault: true
   version: 1
   editable: true
