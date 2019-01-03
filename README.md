@@ -334,7 +334,7 @@ Alerts when a node storage usage goes over 85% for five minutes.
 
 ```
 ALERT node_disk_usage
-  IF ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"}) * 100 / node_filesystem_size{mountpoint="/"}) * on(instance) group_left(node_name) node_meta > 85
+  IF ((node_filesystem_size{mountpoint="/rootfs"} - node_filesystem_free{mountpoint="/rootfs"}) * 100 / node_filesystem_size{mountpoint="/rootfs"}) * on(instance) group_left(node_name) node_meta > 85
   FOR 5m
   LABELS      { severity="warning" }
   ANNOTATIONS {
@@ -349,7 +349,7 @@ Alerts when a node storage is going to remain out of free space in six hours.
 
 ```
 ALERT node_disk_fill_rate_6h
-  IF predict_linear(node_filesystem_free{mountpoint="/"}[1h], 6*3600) * on(instance) group_left(node_name) node_meta < 0
+  IF predict_linear(node_filesystem_free{mountpoint="/rootfs"}[1h], 6*3600) * on(instance) group_left(node_name) node_meta < 0
   FOR 1h
   LABELS      { severity="critical" }
   ANNOTATIONS {
