@@ -83,22 +83,16 @@ export ADMIN_PASSWORD=changethis
 export HASHED_PASSWORD=$(openssl passwd -apr1 $ADMIN_PASSWORD)
 ```
 
-* Set and export a single variable with the username and password in "`htpasswd`" format:
-
-```bash
-export USERNAME_PASSWORD=$ADMIN_USER:$HASHED_PASSWORD
-```
-
 * You can check the contents with:
 
 ```bash
-echo $USERNAME_PASSWORD
+echo $HASHED_PASSWORD
 ```
 
 it will look like:
 
 ```
-admin:$apr1$89eqM5Ro$CxaFELthUKV21DpI3UTQO.
+$apr1$89eqM5Ro$CxaFELthUKV21DpI3UTQO.
 ```
 
 * Create and export an environment variable `DOMAIN`, e.g.:

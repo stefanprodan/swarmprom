@@ -136,7 +136,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic=${USERNAME_PASSWORD}
+        - traefik.frontend.auth.basic.users=${ADMIN_PASSWORD}:${HASHED_PASSWORD}
     networks:
       - default
       - net
@@ -162,7 +162,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic=${USERNAME_PASSWORD}
+        - traefik.frontend.auth.basic.users=${ADMIN_PASSWORD}:${HASHED_PASSWORD}
     networks:
       - default
       - net
@@ -230,7 +230,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic=${USERNAME_PASSWORD}
+        - traefik.frontend.auth.basic.users=${ADMIN_PASSWORD}:${HASHED_PASSWORD}
     networks:
       - default
       - net
