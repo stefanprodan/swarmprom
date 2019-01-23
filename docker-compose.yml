@@ -34,9 +34,11 @@ services:
       mode: global
       resources:
         limits:
-          memory: 128M
+          cpus: '0.10'
+          memory: 16M
         reservations:
-          memory: 64M
+          cpus: '0.10'
+          memory: 4M
 
   cadvisor:
     image: google/cadvisor
@@ -53,8 +55,10 @@ services:
       mode: global
       resources:
         limits:
+          cpus: '0.20'
           memory: 128M
         reservations:
+          cpus: '0.20'
           memory: 64M
 
   grafana:
@@ -82,9 +86,11 @@ services:
           - node.role == manager
       resources:
         limits:
+          cpus: '0.20'
           memory: 128M
         reservations:
-          memory: 64M
+          cpus: '0.20'
+          memory: 16M
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
@@ -107,9 +113,11 @@ services:
           - node.role == manager
       resources:
         limits:
-          memory: 128M
+          cpus: '0.05'
+          memory: 16M
         reservations:
-          memory: 64M
+          cpus: '0.05'
+          memory: 4M
 
   unsee:
     image: cloudflare/unsee:v0.8.0
@@ -142,9 +150,11 @@ services:
       mode: global
       resources:
         limits:
-          memory: 128M
+          cpus: '0.05'
+          memory: 16M
         reservations:
-          memory: 64M
+          cpus: '0.05'
+          memory: 4M
 
   prometheus:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
@@ -169,8 +179,10 @@ services:
           - node.role == manager
       resources:
         limits:
-          memory: 2048M
+          cpus: '0.20'
+          memory: 512M
         reservations:
+          cpus: '0.20'
           memory: 128M
 
   caddy:
@@ -196,9 +208,11 @@ services:
           - node.role == manager
       resources:
         limits:
-          memory: 128M
+          cpus: '0.10'
+          memory: 16M
         reservations:
-          memory: 64M
+          cpus: '0.10'
+          memory: 4M
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 5s
