@@ -56,10 +56,10 @@ services:
       resources:
         limits:
           cpus: '0.20'
-          memory: 128M
+          memory: 512M
         reservations:
           cpus: '0.20'
-          memory: 64M
+          memory: 128M
 
   grafana:
     image: stefanprodan/swarmprom-grafana:5.3.4
