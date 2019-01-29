@@ -43,7 +43,7 @@ Services:
 
 ## Alternative install with Traefik and HTTPS
 
-If you have a Docker Swarm cluster with a global Traefik [set up as described in this article](https://medium.com/@tiangolo/docker-swarm-mode-and-traefik-for-a-https-cluster-20328dba6232), you can deploy Swarmprom integrated with that global Traefik proxy.
+If you have a Docker Swarm cluster with a global Traefik set up as described in [DockerSwarm.rocks](https://dockerswarm.rocks), you can deploy Swarmprom integrated with that global Traefik proxy.
 
 This way, each Swarmprom service will have its own domain, and each of them will be served using HTTPS, with certificates generated (and renewed) automatically.
 
@@ -83,22 +83,16 @@ export ADMIN_PASSWORD=changethis
 export HASHED_PASSWORD=$(openssl passwd -apr1 $ADMIN_PASSWORD)
 ```
 
-* Set and export a single variable with the username and password in "`htpasswd`" format:
-
-```bash
-export USERNAME_PASSWORD=$ADMIN_USER:$HASHED_PASSWORD
-```
-
 * You can check the contents with:
 
 ```bash
-echo $USERNAME_PASSWORD
+echo $HASHED_PASSWORD
 ```
 
 it will look like:
 
 ```
-admin:$apr1$89eqM5Ro$CxaFELthUKV21DpI3UTQO.
+$apr1$89eqM5Ro$CxaFELthUKV21DpI3UTQO.
 ```
 
 * Create and export an environment variable `DOMAIN`, e.g.:
