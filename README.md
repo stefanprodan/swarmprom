@@ -43,7 +43,7 @@ Services:
 
 ## Alternative install with Traefik and HTTPS
 
-If you have a Docker Swarm cluster with a global Traefik [set up as described in this article](https://medium.com/@tiangolo/docker-swarm-mode-and-traefik-for-a-https-cluster-20328dba6232), you can deploy Swarmprom integrated with that global Traefik proxy.
+If you have a Docker Swarm cluster with a global Traefik set up as described in [DockerSwarm.rocks](https://dockerswarm.rocks), you can deploy Swarmprom integrated with that global Traefik proxy.
 
 This way, each Swarmprom service will have its own domain, and each of them will be served using HTTPS, with certificates generated (and renewed) automatically.
 
