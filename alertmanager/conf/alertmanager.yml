@@ -102,3 +102,8 @@ receivers:
     - name: 'team-monitoring-2'
       email_configs:
           - to: 'alestam93@gmail.com, sabbio.a93@gmail.com'
+
+    - name: 'alertmananger-bot'
+      webhook_configs:
+      - send_resolved: true
+        url: 'http://telegram-bot.maas:8080'
