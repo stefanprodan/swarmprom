@@ -1728,6 +1728,7 @@
         {
           "expr": "sum(engine_daemon_engine_info * on(instance) group_left(node_id) swarm_node_info) by (kernel, os, graphdriver, version, node_id)",
           "format": "table",
+          "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
           "refId": "A",
