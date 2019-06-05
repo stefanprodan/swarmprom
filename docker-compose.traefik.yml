@@ -60,7 +60,9 @@ services:
   grafana:
     image: stefanprodan/swarmprom-grafana:5.3.4
     networks:
+      - default
       - net
+      - traefik-public
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
@@ -96,15 +98,13 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-    networks:
-      - default
-      - net
-      - traefik-public
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
     networks:
+      - default
       - net
+      - traefik-public
     environment:
       - SLACK_URL=${SLACK_URL:-https://hooks.slack.com/services/TOKEN}
       - SLACK_CHANNEL=${SLACK_CHANNEL:-general}
@@ -137,15 +137,13 @@ services:
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
         - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
-    networks:
-      - default
-      - net
-      - traefik-public
 
   unsee:
     image: cloudflare/unsee:v0.8.0
     networks:
+      - default
       - net
+      - traefik-public
     environment:
       - "ALERTMANAGER_URIS=default:http://alertmanager:9093"
     deploy:
@@ -163,10 +161,6 @@ services:
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
         - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
-    networks:
-      - default
-      - net
-      - traefik-public
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.16.0
@@ -196,7 +190,9 @@ services:
   prometheus:
     image: stefanprodan/swarmprom-prometheus:v2.5.0
     networks:
+      - default
       - net
+      - traefik-public
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -231,7 +227,3 @@ services:
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
         - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
-    networks:
-      - default
-      - net
-      - traefik-public
