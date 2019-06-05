@@ -1885,7 +1885,7 @@
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
-          "type": "date"
+          "type": "hidden"
         },
         {
           "alias": "",
@@ -1906,6 +1906,7 @@
         {
           "expr": "sum(node_meta) by (node_id, node_name, instance)",
           "format": "table",
+          "instant": true,
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
