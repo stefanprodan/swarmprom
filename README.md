@@ -370,7 +370,7 @@ compose file or using the env variable `PROMETHEUS_RETENTION`.
   prometheus:
     image: stefanprodan/swarmprom-prometheus
     command:
-      - '-storage.tsdb.retention.time=24h'
+      - '-storage.tsdb.retention=24h'
     deploy:
       resources:
         limits:
