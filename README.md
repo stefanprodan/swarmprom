@@ -333,7 +333,7 @@ If you are running Docker with systemd create or edit
 ```
 [Service]
 ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// \
+ExecStart=/usr/bin/dockerd \
   --storage-driver=overlay2 \
   --dns 8.8.4.4 --dns 8.8.8.8 \
   --experimental=true \
