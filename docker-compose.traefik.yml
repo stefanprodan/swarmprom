@@ -88,7 +88,7 @@ services:
         reservations:
           memory: 64M
       labels:
-        - traefik.frontend.rule=Host:grafana.${DOMAIN}
+        - traefik.frontend.rule=Host:grafana.${DOMAIN:?}
         - traefik.enable=true
         - traefik.port=3000
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
@@ -126,7 +126,7 @@ services:
         reservations:
           memory: 64M
       labels:
-        - traefik.frontend.rule=Host:alertmanager.${DOMAIN}
+        - traefik.frontend.rule=Host:alertmanager.${DOMAIN:?}
         - traefik.enable=true
         - traefik.port=9093
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
@@ -150,7 +150,7 @@ services:
       mode: replicated
       replicas: 1
       labels:
-        - traefik.frontend.rule=Host:unsee.${DOMAIN}
+        - traefik.frontend.rule=Host:unsee.${DOMAIN:?}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
@@ -216,7 +216,7 @@ services:
         reservations:
           memory: 128M
       labels:
-        - traefik.frontend.rule=Host:prometheus.${DOMAIN}
+        - traefik.frontend.rule=Host:prometheus.${DOMAIN:?}
         - traefik.enable=true
         - traefik.port=9090
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
