@@ -846,7 +846,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(container_memory_usage_bytes{container_label_com_docker_swarm_node_id=~\"$node_id\", id=~\"/docker/.*\"}) by (container_label_com_docker_swarm_service_name) ",
+          "expr": "sum(container_memory_working_set_bytes{container_label_com_docker_swarm_node_id=~\"$node_id\", id=~\"/docker/.*\"}) by (container_label_com_docker_swarm_service_name) ",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Used {{container_label_com_docker_swarm_service_name}}",
@@ -1023,7 +1023,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, avg_over_time(container_memory_usage_bytes{container_label_com_docker_swarm_node_id=~\"$node_id\", id=~\"/docker/.*\"}[$interval]))",
+          "expr": "topk(10, avg_over_time(container_memory_working_set_bytes{container_label_com_docker_swarm_node_id=~\"$node_id\", id=~\"/docker/.*\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{name}}",
