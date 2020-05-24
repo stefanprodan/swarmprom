@@ -53,7 +53,7 @@ These instructions assume you already have Traefik set up following that guide a
 
 * With automatic HTTPS certificate generation.
 * A Docker Swarm network `traefik-public`.
-* Filtering to only serve containers with a tag `traefik-public`.
+* Filtering to only serve containers with a label `traefik.constraint-label=traefik-public`.
 
 ### Instructions
 
@@ -111,12 +111,6 @@ and make sure that the following sub-domains point to your Docker Swarm cluster 
 (and replace `example.com` with your actual domain).
 
 **Note**: You can also use a subdomain, like `swarmprom.example.com`. Just make sure that the subdomains point to (at least one of) your cluster IPs. Or set up a wildcard subdomain (`*`).
-
-* Set and export an environment variable with the tag used by Traefik public to filter services (by default, it's `traefik-public`):
-
-```bash
-export TRAEFIK_PUBLIC_TAG=traefik-public
-```
 
 * If you are using Slack and want to integrate it, set the following environment variables:
 
