@@ -88,16 +88,17 @@ services:
         reservations:
           memory: 64M
       labels:
-        - traefik.frontend.rule=Host:grafana.${DOMAIN}
         - traefik.enable=true
-        - traefik.port=3000
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
         - traefik.docker.network=traefik-public
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.swarmprom-grafana-http.rule=Host(`grafana.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-grafana-http.entrypoints=http
+        - traefik.http.routers.swarmprom-grafana-http.middlewares=https-redirect
+        - traefik.http.routers.swarmprom-grafana-https.rule=Host(`grafana.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-grafana-https.entrypoints=https
+        - traefik.http.routers.swarmprom-grafana-https.tls=true
+        - traefik.http.routers.swarmprom-grafana-https.tls.certresolver=le
+        - traefik.http.services.swarmprom-grafana.loadbalancer.server.port=3000
 
   alertmanager:
     image: stefanprodan/swarmprom-alertmanager:v0.14.0
@@ -126,17 +127,19 @@ services:
         reservations:
           memory: 64M
       labels:
-        - traefik.frontend.rule=Host:alertmanager.${DOMAIN}
         - traefik.enable=true
-        - traefik.port=9093
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
         - traefik.docker.network=traefik-public
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.swarmprom-alertmanager-http.rule=Host(`alertmanager.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-alertmanager-http.entrypoints=http
+        - traefik.http.routers.swarmprom-alertmanager-http.middlewares=https-redirect
+        - traefik.http.routers.swarmprom-alertmanager-https.rule=Host(`alertmanager.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-alertmanager-https.entrypoints=https
+        - traefik.http.routers.swarmprom-alertmanager-https.tls=true
+        - traefik.http.routers.swarmprom-alertmanager-https.tls.certresolver=le
+        - traefik.http.services.swarmprom-alertmanager.loadbalancer.server.port=9093
+        - traefik.http.middlewares.swarmprom-alertmanager-auth.basicauth.users=${ADMIN_USER?Variable ADMIN_USER not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+        - traefik.http.routers.swarmprom-alertmanager-https.middlewares=swarmprom-alertmanager-auth
 
   unsee:
     image: cloudflare/unsee:v0.8.0
@@ -150,17 +153,19 @@ services:
       mode: replicated
       replicas: 1
       labels:
-        - traefik.frontend.rule=Host:unsee.${DOMAIN}
         - traefik.enable=true
-        - traefik.port=8080
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
         - traefik.docker.network=traefik-public
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.swarmprom-unsee-http.rule=Host(`unsee.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-unsee-http.entrypoints=http
+        - traefik.http.routers.swarmprom-unsee-http.middlewares=https-redirect
+        - traefik.http.routers.swarmprom-unsee-https.rule=Host(`unsee.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-unsee-https.entrypoints=https
+        - traefik.http.routers.swarmprom-unsee-https.tls=true
+        - traefik.http.routers.swarmprom-unsee-https.tls.certresolver=le
+        - traefik.http.services.swarmprom-unsee.loadbalancer.server.port=8080
+        - traefik.http.middlewares.swarmprom-unsee-auth.basicauth.users=${ADMIN_USER?Variable ADMIN_USER not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+        - traefik.http.routers.swarmprom-unsee-https.middlewares=swarmprom-unsee-auth
 
   node-exporter:
     image: stefanprodan/swarmprom-node-exporter:v0.16.0
@@ -216,14 +221,16 @@ services:
         reservations:
           memory: 128M
       labels:
-        - traefik.frontend.rule=Host:prometheus.${DOMAIN}
         - traefik.enable=true
-        - traefik.port=9090
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
         - traefik.docker.network=traefik-public
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=${ADMIN_USER}:${HASHED_PASSWORD}
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.swarmprom-prometheus-http.rule=Host(`prometheus.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-prometheus-http.entrypoints=http
+        - traefik.http.routers.swarmprom-prometheus-http.middlewares=https-redirect
+        - traefik.http.routers.swarmprom-prometheus-https.rule=Host(`prometheus.${DOMAIN?Variable DOMAIN not set}`)
+        - traefik.http.routers.swarmprom-prometheus-https.entrypoints=https
+        - traefik.http.routers.swarmprom-prometheus-https.tls=true
+        - traefik.http.routers.swarmprom-prometheus-https.tls.certresolver=le
+        - traefik.http.services.swarmprom-prometheus.loadbalancer.server.port=9090
+        - traefik.http.middlewares.swarmprom-prometheus-auth.basicauth.users=${ADMIN_USER?Variable ADMIN_USER not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+        - traefik.http.routers.swarmprom-prometheus-https.middlewares=swarmprom-prometheus-auth
