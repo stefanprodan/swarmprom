@@ -452,8 +452,8 @@ ALERT node_disk_fill_rate_6h
 ```
 
 You can add alerts to
-[swarm_node](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_node.rules)
-and [swarm_task](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_task.rules)
+[swarm_node](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_node.rules.yml)
+and [swarm_task](https://github.com/stefanprodan/swarmprom/blob/master/prometheus/rules/swarm_task.rules.yml)
 files and rerun stack deploy to update them. Because these files are mounted inside the Prometheus
 container at run time as [Docker configs](https://docs.docker.com/engine/swarm/configs/)
 you don't have to bundle them with the image.
